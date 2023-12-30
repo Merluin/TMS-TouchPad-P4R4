@@ -36,27 +36,27 @@ class SerialApp(QtWidgets.QMainWindow):
         leftLayout.addWidget(leftPanelLabel)
 
         # Create layout and widgets for IPI Dial (default value 4)
-        self.createDialLayout(leftLayout, "IPI", 0, 200, 4)
+        self.createDialLayout(leftLayout, "IPI", 0, 120, 4)
 
         # Create layout and widgets for Nrep Dial (default value 90)
-        self.createDialLayout(leftLayout, "Nrep", 0, 100, 90)
+        self.createDialLayout(leftLayout, "Nrep", 0, 200, 90)
 
         # Create layout and widgets for ITI Dial (default value 10)
-        self.createDialLayout(leftLayout, "ITI", 0, 300, 10)
+        self.createDialLayout(leftLayout, "ITI", 0, 120, 10)
 
         # Create a horizontal layout for buttons
         buttonsLayout = QtWidgets.QHBoxLayout()
 
         # Create buttons and add them to the buttons layout
-        self.ts_button = QtWidgets.QPushButton('TsButton')
+        self.ts_button = QtWidgets.QPushButton('Ts')
         self.ts_button.clicked.connect(self.TsButtonPushed)
         buttonsLayout.addWidget(self.ts_button)
 
-        self.cs_button = QtWidgets.QPushButton('CsButton')
+        self.cs_button = QtWidgets.QPushButton('Cs')
         self.cs_button.clicked.connect(self.CsButtonPushed)
         buttonsLayout.addWidget(self.cs_button)
 
-        self.ttl_button = QtWidgets.QPushButton('TTLButton')
+        self.ttl_button = QtWidgets.QPushButton('Bio')
         self.ttl_button.clicked.connect(self.TTLButtonPushed)
         buttonsLayout.addWidget(self.ttl_button)
 
