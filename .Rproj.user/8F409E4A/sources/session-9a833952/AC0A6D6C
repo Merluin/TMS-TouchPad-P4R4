@@ -1,7 +1,7 @@
 {
     "id": "AC0A6D6C",
-    "path": "~/Library/Mobile Documents/com~apple~CloudDocs/01.WORK/10.techno/ppTMS_GUI/serial.py",
-    "project_path": "serial.py",
+    "path": "~/Library/Mobile Documents/com~apple~CloudDocs/01.WORK/10.techno/ppTMS_GUI/serial_test.py",
+    "project_path": "serial_test.py",
     "type": "python",
     "hash": "0",
     "contents": "",
@@ -12,8 +12,8 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "40,0",
-        "scrollLine": "16"
+        "cursorPosition": "24,15",
+        "scrollLine": "12"
     },
     "folds": "",
     "lastKnownWriteTime": 1703848962,
