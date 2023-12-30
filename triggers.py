@@ -30,6 +30,11 @@ class SerialApp(QtWidgets.QMainWindow):
         leftPanel = QtWidgets.QWidget()
         leftLayout = QtWidgets.QVBoxLayout(leftPanel)
 
+        # Add "Settings" label at the top of the left panel
+        leftPanelLabel = QtWidgets.QLabel("Settings")
+        leftPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
+        leftLayout.addWidget(leftPanelLabel)
+
         # Create layout and widgets for IPI Dial (default value 4)
         self.createDialLayout(leftLayout, "IPI", 0, 200, 4)
 
@@ -67,6 +72,14 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Right Panel for future content
         rightPanel = QtWidgets.QWidget()
+        rightLayout = QtWidgets.QVBoxLayout(rightPanel)
+
+        # Add "ppTMS GUI" label at the top of the right panel
+        rightPanelLabel = QtWidgets.QLabel("ppTMS GUI")
+        rightPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
+        rightLayout.addWidget(rightPanelLabel)
+
+        # Add right panel to splitter
         splitter.addWidget(rightPanel)
 
         # Add splitter to main layout
@@ -102,7 +115,6 @@ class SerialApp(QtWidgets.QMainWindow):
         setattr(self, f"{dialName.lower()}Dial", dial)
         setattr(self, f"{dialName.lower()}ValueLabel", valueLabel)
 
-
     def dialValueChanged(self, value, name):
         label = getattr(self, f"{name.lower()}ValueLabel")
         label.setText(str(value))
@@ -110,24 +122,23 @@ class SerialApp(QtWidgets.QMainWindow):
     def TsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,1\n')
-            self.triggercatch.setText('Ts Button pressed')
+            self.triggercatch.setText('TsButton pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def CsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,2\n')
-            self.triggercatch.setText('Cs Button pressed')
+            self.triggercatch.setText('CsButton pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def TTLButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,3\n')
-            self.triggercatch.setText('BP Button pressed')
+            self.triggercatch.setText('TTLButton pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
