@@ -26,42 +26,29 @@ class SerialApp(QtWidgets.QMainWindow):
         # Create splitter
         splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
 
-        # Left Panel for QDial, Value Display, and Buttons
+        # Left Panel for Dials and Buttons
         leftPanel = QtWidgets.QWidget()
         leftLayout = QtWidgets.QVBoxLayout(leftPanel)
 
-        # Create a horizontal layout for the dial and its value label
-        dialLayout = QtWidgets.QHBoxLayout()
+        # Create layout and widgets for IPI Dial
+        self.createDialLayout(leftLayout, "IPI", 0, 200)
 
-        # Create QDial
-        self.dial = QtWidgets.QDial()
-        self.dial.setRange(0, 200)
-        self.dial.valueChanged.connect(self.dialValueChanged)
+        # Create layout and widgets for Nrep Dial
+        self.createDialLayout(leftLayout, "Nrep", 0, 100)
 
-        # Create Label for QDial Name
-        dialNameLabel = QtWidgets.QLabel("IPI")
-        dialLayout.addWidget(dialNameLabel)
-
-        # Add QDial to the layout
-        dialLayout.addWidget(self.dial)
-
-        # Create Value Display Label
-        self.dialValueLabel = QtWidgets.QLabel("0")
-        dialLayout.addWidget(self.dialValueLabel)
-
-        # Add the dial layout to the left panel layout
-        leftLayout.addLayout(dialLayout)
+        # Create layout and widgets for ITI Dial
+        self.createDialLayout(leftLayout, "ITI", 0, 300)
 
         # Create buttons and add them to the left panel
-        self.ts_button = QtWidgets.QPushButton('TsButton')
+        self.ts_button = QtWidgets.QPushButton('Ts')
         self.ts_button.clicked.connect(self.TsButtonPushed)
         leftLayout.addWidget(self.ts_button)
 
-        self.cs_button = QtWidgets.QPushButton('CsButton')
+        self.cs_button = QtWidgets.QPushButton('Cs')
         self.cs_button.clicked.connect(self.CsButtonPushed)
         leftLayout.addWidget(self.cs_button)
 
-        self.ttl_button = QtWidgets.QPushButton('TTLButton')
+        self.ttl_button = QtWidgets.QPushButton('BP')
         self.ttl_button.clicked.connect(self.TTLButtonPushed)
         leftLayout.addWidget(self.ttl_button)
 
@@ -83,27 +70,53 @@ class SerialApp(QtWidgets.QMainWindow):
         self.setGeometry(100, 100, 800, 400)
         self.setWindowTitle('Serial Communication App')
 
-    def dialValueChanged(self, value):
-        self.dialValueLabel.setText(str(value))
+    def createDialLayout(self, parentLayout, dialName, minValue, maxValue):
+        # Create a horizontal layout for the dial and its value label
+        dialLayout = QtWidgets.QHBoxLayout()
+
+        # Create Label for QDial Name
+        dialNameLabel = QtWidgets.QLabel(dialName)
+        dialLayout.addWidget(dialNameLabel)
+
+        # Create QDial
+        dial = QtWidgets.QDial()
+        dial.setRange(minValue, maxValue)
+        dial.valueChanged.connect(lambda value, name=dialName: self.dialValueChanged(value, name))
+        dialLayout.addWidget(dial)
+
+        # Create Value Display Label
+        valueLabel = QtWidgets.QLabel("0")
+        dialLayout.addWidget(valueLabel)
+
+        # Add the dial layout to the parent layout
+        parentLayout.addLayout(dialLayout)
+
+        # Store dial and label in a dictionary for later reference
+        setattr(self, f"{dialName.lower()}Dial", dial)
+        setattr(self, f"{dialName.lower()}ValueLabel", valueLabel)
+
+    def dialValueChanged(self, value, name):
+        label = getattr(self, f"{name.lower()}ValueLabel")
+        label.setText(str(value))
 
     def TsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,1\n')
-            self.triggercatch.setText('TsButton pressed')
+            self.triggercatch.setText('Ts Button pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def CsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,2\n')
-            self.triggercatch.setText('CsButton pressed')
+            self.triggercatch.setText('Cs Button pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def TTLButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,3\n')
-            self.triggercatch.setText('TTLButton pressed')
+            self.triggercatch.setText('BP Button pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
