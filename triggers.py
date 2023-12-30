@@ -30,27 +30,33 @@ class SerialApp(QtWidgets.QMainWindow):
         leftPanel = QtWidgets.QWidget()
         leftLayout = QtWidgets.QVBoxLayout(leftPanel)
 
-        # Create layout and widgets for IPI Dial
-        self.createDialLayout(leftLayout, "IPI", 0, 200)
+        # Create layout and widgets for IPI Dial (default value 4)
+        self.createDialLayout(leftLayout, "IPI", 0, 200, 4)
 
-        # Create layout and widgets for Nrep Dial
-        self.createDialLayout(leftLayout, "Nrep", 0, 100)
+        # Create layout and widgets for Nrep Dial (default value 90)
+        self.createDialLayout(leftLayout, "Nrep", 0, 100, 90)
 
-        # Create layout and widgets for ITI Dial
-        self.createDialLayout(leftLayout, "ITI", 0, 300)
+        # Create layout and widgets for ITI Dial (default value 10)
+        self.createDialLayout(leftLayout, "ITI", 0, 300, 10)
 
-        # Create buttons and add them to the left panel
-        self.ts_button = QtWidgets.QPushButton('Ts')
+        # Create a horizontal layout for buttons
+        buttonsLayout = QtWidgets.QHBoxLayout()
+
+        # Create buttons and add them to the buttons layout
+        self.ts_button = QtWidgets.QPushButton('TsButton')
         self.ts_button.clicked.connect(self.TsButtonPushed)
-        leftLayout.addWidget(self.ts_button)
+        buttonsLayout.addWidget(self.ts_button)
 
-        self.cs_button = QtWidgets.QPushButton('Cs')
+        self.cs_button = QtWidgets.QPushButton('CsButton')
         self.cs_button.clicked.connect(self.CsButtonPushed)
-        leftLayout.addWidget(self.cs_button)
+        buttonsLayout.addWidget(self.cs_button)
 
-        self.ttl_button = QtWidgets.QPushButton('BP')
+        self.ttl_button = QtWidgets.QPushButton('TTLButton')
         self.ttl_button.clicked.connect(self.TTLButtonPushed)
-        leftLayout.addWidget(self.ttl_button)
+        buttonsLayout.addWidget(self.ttl_button)
+
+        # Add buttons layout to the left panel layout
+        leftLayout.addLayout(buttonsLayout)
 
         # Create a label for displaying messages
         self.triggercatch = QtWidgets.QLabel()
@@ -70,7 +76,7 @@ class SerialApp(QtWidgets.QMainWindow):
         self.setGeometry(100, 100, 800, 400)
         self.setWindowTitle('Serial Communication App')
 
-    def createDialLayout(self, parentLayout, dialName, minValue, maxValue):
+    def createDialLayout(self, parentLayout, dialName, minValue, maxValue, defaultValue):
         # Create a horizontal layout for the dial and its value label
         dialLayout = QtWidgets.QHBoxLayout()
 
@@ -81,11 +87,12 @@ class SerialApp(QtWidgets.QMainWindow):
         # Create QDial
         dial = QtWidgets.QDial()
         dial.setRange(minValue, maxValue)
+        dial.setValue(defaultValue)  # Set default value
         dial.valueChanged.connect(lambda value, name=dialName: self.dialValueChanged(value, name))
         dialLayout.addWidget(dial)
 
-        # Create Value Display Label
-        valueLabel = QtWidgets.QLabel("0")
+        # Create Value Display Label with default value
+        valueLabel = QtWidgets.QLabel(str(defaultValue))
         dialLayout.addWidget(valueLabel)
 
         # Add the dial layout to the parent layout
@@ -94,6 +101,7 @@ class SerialApp(QtWidgets.QMainWindow):
         # Store dial and label in a dictionary for later reference
         setattr(self, f"{dialName.lower()}Dial", dial)
         setattr(self, f"{dialName.lower()}ValueLabel", valueLabel)
+
 
     def dialValueChanged(self, value, name):
         label = getattr(self, f"{name.lower()}ValueLabel")
