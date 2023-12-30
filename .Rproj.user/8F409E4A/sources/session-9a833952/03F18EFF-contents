@@ -30,15 +30,27 @@ class SerialApp(QtWidgets.QMainWindow):
         leftPanel = QtWidgets.QWidget()
         leftLayout = QtWidgets.QVBoxLayout(leftPanel)
 
+        # Create a horizontal layout for the dial and its value label
+        dialLayout = QtWidgets.QHBoxLayout()
+
         # Create QDial
         self.dial = QtWidgets.QDial()
         self.dial.setRange(0, 200)
         self.dial.valueChanged.connect(self.dialValueChanged)
-        leftLayout.addWidget(self.dial)
+
+        # Create Label for QDial Name
+        dialNameLabel = QtWidgets.QLabel("IPI")
+        dialLayout.addWidget(dialNameLabel)
+
+        # Add QDial to the layout
+        dialLayout.addWidget(self.dial)
 
         # Create Value Display Label
         self.dialValueLabel = QtWidgets.QLabel("0")
-        leftLayout.addWidget(self.dialValueLabel)
+        dialLayout.addWidget(self.dialValueLabel)
+
+        # Add the dial layout to the left panel layout
+        leftLayout.addLayout(dialLayout)
 
         # Create buttons and add them to the left panel
         self.ts_button = QtWidgets.QPushButton('TsButton')
@@ -74,26 +86,7 @@ class SerialApp(QtWidgets.QMainWindow):
     def dialValueChanged(self, value):
         self.dialValueLabel.setText(str(value))
 
-    def TsButtonPushed(self):
-        try:
-            self.arduinoSerial.write(b'SET,test,1\n')
-            self.triggercatch.setText('TsButton pressed')
-        except Exception as e:
-            self.triggercatch.setText('!!! Serial is not connected !!!')
-
-    def CsButtonPushed(self):
-        try:
-            self.arduinoSerial.write(b'SET,test,2\n')
-            self.triggercatch.setText('CsButton pressed')
-        except Exception as e:
-            self.triggercatch.setText('!!! Serial is not connected !!!')
-
-    def TTLButtonPushed(self):
-        try:
-            self.arduinoSerial.write(b'SET,test,3\n')
-            self.triggercatch.setText('TTLButton pressed')
-        except Exception as e:
-            self.triggercatch.setText('!!! Serial is not connected !!!')
+    # ... [rest of your class methods] ...
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
