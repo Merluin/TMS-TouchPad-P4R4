@@ -86,7 +86,27 @@ class SerialApp(QtWidgets.QMainWindow):
     def dialValueChanged(self, value):
         self.dialValueLabel.setText(str(value))
 
-    # ... [rest of your class methods] ...
+    def TsButtonPushed(self):
+        try:
+            self.arduinoSerial.write(b'SET,test,1\n')
+            self.triggercatch.setText('TsButton pressed')
+        except Exception as e:
+            self.triggercatch.setText('!!! Serial is not connected !!!')
+
+    def CsButtonPushed(self):
+        try:
+            self.arduinoSerial.write(b'SET,test,2\n')
+            self.triggercatch.setText('CsButton pressed')
+        except Exception as e:
+            self.triggercatch.setText('!!! Serial is not connected !!!')
+
+    def TTLButtonPushed(self):
+        try:
+            self.arduinoSerial.write(b'SET,test,3\n')
+            self.triggercatch.setText('TTLButton pressed')
+        except Exception as e:
+            self.triggercatch.setText('!!! Serial is not connected !!!')
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
