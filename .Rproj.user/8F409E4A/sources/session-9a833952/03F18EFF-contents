@@ -44,6 +44,10 @@ class SerialApp(QtWidgets.QMainWindow):
         # Create layout and widgets for ITI Dial (default value 10)
         self.createDialLayout(leftLayout, "ITI", 0, 120, 10)
 
+        # Add a label for "Trigger buttons:"
+        triggerButtonsLabel = QtWidgets.QLabel("Trigger buttons:")
+        leftLayout.addWidget(triggerButtonsLabel)
+
         # Create a horizontal layout for buttons
         buttonsLayout = QtWidgets.QHBoxLayout()
 
@@ -78,6 +82,14 @@ class SerialApp(QtWidgets.QMainWindow):
         rightPanelLabel = QtWidgets.QLabel("ppTMS GUI")
         rightPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
         rightLayout.addWidget(rightPanelLabel)
+
+        # Create Start, Pause, Stop buttons in the right panel
+        self.startButton = QtWidgets.QPushButton('Start')
+        rightLayout.addWidget(self.startButton)
+        self.pauseButton = QtWidgets.QPushButton('Pause')
+        rightLayout.addWidget(self.pauseButton)
+        self.stopButton = QtWidgets.QPushButton('Stop')
+        rightLayout.addWidget(self.stopButton)
 
         # Add right panel to splitter
         splitter.addWidget(rightPanel)
