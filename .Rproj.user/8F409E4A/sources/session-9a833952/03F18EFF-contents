@@ -205,14 +205,13 @@ class SerialApp(QtWidgets.QMainWindow):
         iti = self.itiDial.value()
     
         for i in range(numLoops):
-            start_time = time.time()
     
             with self.loopCondition:
                 while not self.loopPaused.is_set():
                     self.loopCondition.wait()  # Wait if paused
                 if not self.isRunning:
                     break  # Break the loop if stop button was pressed
-    
+                start_time = time.time()
                 self.arduinoSerial.write(b'START1')
                 # Update UI
                 # self.updateProgressBar(i, numLoops)
