@@ -181,19 +181,19 @@ class SerialApp(QtWidgets.QMainWindow):
         if not self.isRunning:
             self.isRunning = True
             self.startButton.setStyleSheet("background-color: green")
-            ipi = self.ipiDial.value()
-            numLoops = self.nrepDial.value()
-            iti = self.itiDial.value()
+            ipi = int(self.ipiDial.value())
+            numLoops = int(self.nrepDial.value())
+            iti = int(self.itiDial.value())
 
             # Send the IPI command
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
 
             # Stimulation loop
-            for i in range(numLoops):
+            for i in 1:numLoops):
                 self.arduinoSerial.write(b'START1')
                 time.sleep(iti)
-                progress = (i / numLoops) * 100
-                self.progressBar.setValue(int(progress))
+                progress = int(round((i / numLoops) * 100))
+                self.progressBar.setValue(progress)
 
             self.progressBar.setValue(100)  # Set progress bar to 100% at the end
 
