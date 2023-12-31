@@ -126,6 +126,10 @@ class SerialApp(QtWidgets.QMainWindow):
         # Set the size of the window
         self.setGeometry(100, 100, 800, 400)
         self.setWindowTitle('Serial Communication App')
+        
+        def adjustSplitter(self):
+        window_width = self.width()
+        self.splitter.setSizes([window_width // 2, window_width // 2])
 
     def createDialLayout(self, parentLayout, dialName, minValue, maxValue, defaultValue):
         # Create a horizontal layout for the dial and its value label
@@ -183,8 +187,7 @@ class SerialApp(QtWidgets.QMainWindow):
             self.isRunning = True
             self.startButton.setStyleSheet("background-color: green")
             ipi = self.ipiDial.value()
-            numLoops = self.nrepDial.value()
-            iti = self.itiDial.value()
+            
             # Send the IPI command
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
             # Start the stimulation loop in a separate thread
@@ -192,6 +195,8 @@ class SerialApp(QtWidgets.QMainWindow):
             self.thread.start()
 
     def runStimulationLoop(self):
+            numLoops = self.nrepDial.value()
+            iti = self.itiDial.value()
         for i in range(numLoops):
             if not self.isRunning:
                 break  # Exit the loop if the stop button has been pressed
