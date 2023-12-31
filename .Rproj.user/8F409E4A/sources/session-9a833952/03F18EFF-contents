@@ -193,7 +193,7 @@ class SerialApp(QtWidgets.QMainWindow):
                 self.arduinoSerial.write(b'START1')
                 time.sleep(iti)
                 progress = (i / numLoops) * 100
-                self.progressBar.setValue(progress)
+                self.progressBar.setValue(int(progress))
 
             self.progressBar.setValue(100)  # Set progress bar to 100% at the end
 
