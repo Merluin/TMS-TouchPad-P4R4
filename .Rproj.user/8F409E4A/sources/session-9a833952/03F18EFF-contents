@@ -3,6 +3,7 @@ import serial
 from PyQt5 import QtWidgets, QtCore
 import RPi.GPIO as GPIO
 import time
+import threading
 
 # Set up GPIO using BCM numbering
 GPIO.setmode(GPIO.BCM)
@@ -181,32 +182,33 @@ class SerialApp(QtWidgets.QMainWindow):
         if not self.isRunning:
             self.isRunning = True
             self.startButton.setStyleSheet("background-color: green")
-            QtWidgets.QApplication.processEvents() 
-            
-            ipi = int(self.ipiDial.value())
-            numLoops = int(self.nrepDial.value())
-            iti = int(self.itiDial.value())
-
+            ipi = self.ipiDial.value()
+            numLoops = self.nrepDial.value()
+            iti = self.itiDial.value()
             # Send the IPI command
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
-            time.sleep(2)
-            
-            # Stimulation loop
-            for i in range(numLoops):
-                self.arduinoSerial.write(b'START1')
-                time.sleep(iti)
-                progress = int(round(((i+1) / numLoops) * 100))
-                self.progressBar.setValue(progress)
-                QtWidgets.QApplication.processEvents() 
+            # Start the stimulation loop in a separate thread
+            self.thread = threading.Thread(target=self.runStimulationLoop)
+            self.thread.start()
 
-            self.progressBar.setValue(100)  # Set progress bar to 100% at the end
+    def runStimulationLoop(self):
+        for i in range(numLoops):
+            if not self.isRunning:
+                break  # Exit the loop if the stop button has been pressed
+            self.arduinoSerial.write(b'START1')
+            time.sleep(iti)
+            progress = int((i / numLoops) * 100)
+            self.progressBar.setValue(progress)
+            QtWidgets.QApplication.processEvents()
+
+        self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
+        self.isRunning = False
+        self.startButton.setStyleSheet("background-color: gray")
 
     def stopButtonPushed(self):
-        if self.isRunning:
-            self.isRunning = False
-            self.stopButton.setStyleSheet("background-color: red")
-            self.startButton.setStyleSheet("background-color: gray")
-            self.progressBar.setValue(0)
+        self.isRunning = False
+        self.stopButton.setStyleSheet("background-color: red")
+
 
     def closeEvent(self, event):
         relay_off()  # Turn off the relay when the application is closed
