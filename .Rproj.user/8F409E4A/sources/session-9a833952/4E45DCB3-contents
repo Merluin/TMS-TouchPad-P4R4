@@ -1,0 +1,82 @@
+import sys
+import serial
+from PyQt5 import QtWidgets, QtCore
+import RPi.GPIO as GPIO
+
+# Set up GPIO using BCM numbering
+GPIO.setmode(GPIO.BCM)
+
+# Set up pin 17 as an output
+GPIO.setup(17, GPIO.OUT)
+
+# Function to turn the relay ON
+def relay_on():
+    GPIO.output(17, GPIO.HIGH)  # Set GPIO 17 to HIGH
+
+# Function to turn the relay OFF
+def relay_off():
+    GPIO.output(17, GPIO.LOW)   # Set GPIO 17 to LOW
+
+class SerialApp(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Initialize the serial connection
+        self.arduinoSerial = serial.Serial()
+        self.arduinoSerial.baudrate = 9600
+        self.arduinoSerial.timeout = 1
+        self.arduinoSerial.port = '/dev/ttyS0'  # Replace with the correct port
+
+        # Attempt to open the serial port
+        try:
+            self.arduinoSerial.open()
+        except serial.SerialException as e:
+            print(f"Error opening serial port: {e}")
+
+        # Create main widget and layout
+        mainWidget = QtWidgets.QWidget()
+        self.setCentralWidget(mainWidget)
+        mainLayout = QtWidgets.QHBoxLayout(mainWidget)
+
+        # Create splitter
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
+
+        # Add left and right panels to splitter
+        # ... (setup panels as in your existing code)
+
+        # Add splitter to main layout
+        mainLayout.addWidget(splitter)
+
+        # Set the size of the window
+        self.setGeometry(100, 100, 800, 400)
+        self.setWindowTitle('Serial Communication App')
+
+    def createDialLayout(self, parentLayout, dialName, minValue, maxValue, defaultValue):
+        # ... (implement as in your existing code)
+
+    def dialValueChanged(self, value, name):
+        # ... (implement as in your existing code)
+
+    def TsButtonPushed(self):
+        # ... (implement as in your existing code)
+
+    def CsButtonPushed(self):
+        # ... (implement as in your existing code)
+
+    def TTLButtonPushed(self):
+        # ... (implement as in your existing code)
+
+    # Override closeEvent to handle the window close action
+    def closeEvent(self, event):
+        relay_off()  # Turn off the relay when the application is closed
+        if self.arduinoSerial.is_open:
+            self.arduinoSerial.close()  # Close the serial port if it's open
+        GPIO.cleanup()  # Clean up GPIO
+        super().closeEvent(event)
+
+if __name__ == '__main__':
+    relay_on()  # Turn on the relay at the start of the application
+    app = QtWidgets.QApplication(sys.argv)
+    mainWin = SerialApp()
+    mainWin.show()
+    sys.exit(app.exec_())

@@ -1,6 +1,21 @@
 import sys
 import serial
 from PyQt5 import QtWidgets, QtCore
+import RPi.GPIO as GPIO
+
+# Set up GPIO using BCM numbering
+GPIO.setmode(GPIO.BCM)
+
+# Set up pin 17 as an output
+GPIO.setup(17, GPIO.OUT)
+
+# Function to turn the relay ON
+def relay_on():
+    GPIO.output(17, GPIO.HIGH)  # Set GPIO 17 to HIGH
+
+# Function to turn the relay OFF
+def relay_off():
+    GPIO.output(17, GPIO.LOW)   # Set GPIO 17 to LOW
 
 class SerialApp(QtWidgets.QMainWindow):
     def __init__(self):
@@ -134,26 +149,35 @@ class SerialApp(QtWidgets.QMainWindow):
     def TsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,1\n')
-            self.triggercatch.setText('TsButton pressed')
+            self.triggercatch.setText('Ts pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def CsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,2\n')
-            self.triggercatch.setText('CsButton pressed')
+            self.triggercatch.setText('Cs pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def TTLButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,3\n')
-            self.triggercatch.setText('TTLButton pressed')
+            self.triggercatch.setText('Bio pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
+    def closeEvent(self, event):
+        relay_off()  # Turn off the relay when the application is closed
+        if self.arduinoSerial.is_open:
+            self.arduinoSerial.close()  # Close the serial port if it's open
+        GPIO.cleanup()  # Clean up GPIO
+        super().closeEvent(event)
+
 if __name__ == '__main__':
+    relay_on()  # Turn on the relay at the start of the application
     app = QtWidgets.QApplication(sys.argv)
     mainWin = SerialApp()
     mainWin.show()
     sys.exit(app.exec_())
+
