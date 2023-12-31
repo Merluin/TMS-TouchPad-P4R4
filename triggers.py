@@ -185,7 +185,7 @@ class SerialApp(QtWidgets.QMainWindow):
     def startButtonPushed(self):
         if not self.isRunning:
             self.isRunning = True
-            self.startButton.setStyleSheet("background-color: green")
+            self.startButton.setStyleSheet("background-color:#ff0000;")
             ipi = self.ipiDial.value()
             
             # Send the IPI command
