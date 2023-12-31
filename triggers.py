@@ -148,21 +148,21 @@ class SerialApp(QtWidgets.QMainWindow):
 
     def TsButtonPushed(self):
         try:
-            self.arduinoSerial.write(b'SET,test,1\n')
+            self.arduinoSerial.write(b'SET,test,1')
             self.triggercatch.setText('Ts pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def CsButtonPushed(self):
         try:
-            self.arduinoSerial.write(b'SET,test,2\n')
+            self.arduinoSerial.write(b'SET,test,2')
             self.triggercatch.setText('Cs pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def TTLButtonPushed(self):
         try:
-            self.arduinoSerial.write(b'SET,test,3\n')
+            self.arduinoSerial.write(b'SET,test,3')
             self.triggercatch.setText('Bio pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
