@@ -127,9 +127,13 @@ class SerialApp(QtWidgets.QMainWindow):
         self.setGeometry(100, 100, 800, 400)
         self.setWindowTitle('Serial Communication App')
         
-        def adjustSplitter(self):
-          window_width = self.width()
-          self.splitter.setSizes([window_width // 2, window_width // 2])
+        self.loopPaused = threading.Event()
+        self.loopPaused.set()  # Initially set to True to allow loop execution
+        self.loopCondition = threading.Condition()
+        
+    def adjustSplitter(self):
+      window_width = self.width()
+      self.splitter.setSizes([window_width // 2, window_width // 2])
 
     def createDialLayout(self, parentLayout, dialName, minValue, maxValue, defaultValue):
         # Create a horizontal layout for the dial and its value label
@@ -199,17 +203,36 @@ class SerialApp(QtWidgets.QMainWindow):
         iti = self.itiDial.value()
             
         for i in range(numLoops):
-            if not self.isRunning:
-                break  # Exit the loop if the stop button has been pressed
-            self.arduinoSerial.write(b'START1')
-            time.sleep(iti)
-            progress = int((i / numLoops) * 100)
-            self.progressBar.setValue(progress)
-            QtWidgets.QApplication.processEvents()
+            with self.loopCondition:
+                if not self.isRunning:
+                    break
+                while not self.loopPaused.is_set():
+                  self.loopCondition.wait()
+                  self.arduinoSerial.write(b'START1')
+                  time.sleep(iti)
+                  progress = int((i / numLoops) * 100)
+                  self.progressBar.setValue(progress)
+                  QtWidgets.QApplication.processEvents()
 
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
         self.startButton.setStyleSheet("background-color: gray")
+        
+    def pauseLoop(self):
+        self.loopPaused.clear()  # Clear the event to pause the loop
+
+    def resumeLoop(self):
+        with self.loopCondition:
+            self.loopPaused.set()  # Set the event to resume the loop
+            self.loopCondition.notify()  # Notify the loop to continue
+
+    def pauseButtonPushed(self):
+        if self.isRunning and self.loopPaused.is_set():
+            self.pauseLoop()
+            self.pauseButton.setText("Resume")
+        else:
+            self.resumeLoop()
+            self.pauseButton.setText("Pause")
 
     def stopButtonPushed(self):
         self.isRunning = False
