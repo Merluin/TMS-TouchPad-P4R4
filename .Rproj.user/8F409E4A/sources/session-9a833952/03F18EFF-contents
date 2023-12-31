@@ -73,7 +73,7 @@ class SerialApp(QtWidgets.QMainWindow):
         self.cs_button.clicked.connect(self.CsButtonPushed)
         buttonsLayout.addWidget(self.cs_button)
         
-         self.ts_button = QtWidgets.QPushButton('Ts')
+        self.ts_button = QtWidgets.QPushButton('Ts')
         self.ts_button.clicked.connect(self.TsButtonPushed)
         buttonsLayout.addWidget(self.ts_button)
 
