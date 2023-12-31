@@ -200,7 +200,7 @@ class SerialApp(QtWidgets.QMainWindow):
             self.thread = threading.Thread(target=self.runStimulationLoop)
             self.thread.start()
 
-   def runStimulationLoop(self):
+    def runStimulationLoop(self):
         numLoops = self.nrepDial.value()
         iti = self.itiDial.value()
     
