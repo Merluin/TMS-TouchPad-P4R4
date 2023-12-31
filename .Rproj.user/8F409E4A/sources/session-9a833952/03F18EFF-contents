@@ -205,20 +205,21 @@ class SerialApp(QtWidgets.QMainWindow):
         iti = self.itiDial.value()
     
         for i in range(numLoops):
+            start_time = time.time()
+
             with self.loopCondition:
                 while not self.loopPaused.is_set():
                     self.loopCondition.wait()  # Wait if paused
-    
             if not self.isRunning:
                 break
-    
             self.arduinoSerial.write(b'START1')
-            
             progress = int((i / numLoops) * 100)
             self.progressBar.setValue(progress)
             QtWidgets.QApplication.processEvents()
-            
-            time.sleep(iti)
+             # Calculate the remaining time to sleep
+            elapsed_time = time.time() - start_time
+            remaining_time = max(0, iti - elapsed_time)
+            time.sleep(remaining_time)
     
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
