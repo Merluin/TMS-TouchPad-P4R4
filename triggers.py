@@ -200,25 +200,26 @@ class SerialApp(QtWidgets.QMainWindow):
             self.thread = threading.Thread(target=self.runStimulationLoop)
             self.thread.start()
 
-    def runStimulationLoop(self):
+   def runStimulationLoop(self):
         numLoops = self.nrepDial.value()
         iti = self.itiDial.value()
     
         for i in range(numLoops):
             start_time = time.time()
-
+    
             with self.loopCondition:
                 while not self.loopPaused.is_set():
                     self.loopCondition.wait()  # Wait if paused
-            if not self.isRunning:
-                break
-            self.arduinoSerial.write(b'START1')
-            # Update UI
-            self.updateProgressBar(i, numLoops)
-            # Calculate the remaining time to sleep
-            elapsed_time = time.time() - start_time
-            remaining_time = max(0, iti - elapsed_time)
-            time.sleep(remaining_time)
+                if not self.isRunning:
+                    break  # Break the loop if stop button was pressed
+    
+                self.arduinoSerial.write(b'START1')
+                # Update UI
+                self.updateProgressBar(i, numLoops)
+                # Calculate the remaining time to sleep
+                elapsed_time = time.time() - start_time
+                remaining_time = max(0, iti - elapsed_time)
+                time.sleep(remaining_time)
     
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
@@ -248,6 +249,9 @@ class SerialApp(QtWidgets.QMainWindow):
     def stopButtonPushed(self):
         self.isRunning = False
         self.stopButton.setStyleSheet("background-color: red")
+        with self.loopCondition:
+            self.loopPaused.set()  # Make sure the loop resumes if it was paused
+            self.loopCondition.notify()
 
 
     def closeEvent(self, event):
