@@ -189,10 +189,10 @@ class SerialApp(QtWidgets.QMainWindow):
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
 
             # Stimulation loop
-            for i in 1:numLoops:
+            for i in range(numLoops):
                 self.arduinoSerial.write(b'START1')
                 time.sleep(iti)
-                progress = int(round((i / numLoops) * 100))
+                progress = int(round(((i+1) / numLoops) * 100))
                 self.progressBar.setValue(progress)
 
             self.progressBar.setValue(100)  # Set progress bar to 100% at the end
