@@ -23,7 +23,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Initialize the serial connection
         self.arduinoSerial = serial.Serial()
-        self.arduinoSerial.baudrate = 9600
+        self.arduinoSerial.baudrate = 115200
         self.arduinoSerial.timeout = 1
         self.arduinoSerial.port = '/dev/ttyS0'  # Replace with the correct port
 
