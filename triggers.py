@@ -53,13 +53,13 @@ class SerialApp(QtWidgets.QMainWindow):
         leftLayout.addWidget(leftPanelLabel)
 
         # Create layout and widgets for IPI Dial (default value 4)
-        self.createDialLayout(leftLayout, "IPI", 0, 120, 4)
+        self.createDialLayout(leftLayout, "IPI", 0, 1000, 300)
 
         # Create layout and widgets for Nrep Dial (default value 90)
-        self.createDialLayout(leftLayout, "Nrep", 0, 200, 90)
+        self.createDialLayout(leftLayout, "Nrep", 0, 200, 10)
 
         # Create layout and widgets for ITI Dial (default value 10)
-        self.createDialLayout(leftLayout, "ITI", 0, 120, 10)
+        self.createDialLayout(leftLayout, "ITI", 0, 120, 5)
 
         # Add a label for "Trigger buttons:"
         triggerButtonsLabel = QtWidgets.QLabel("Trigger buttons:")
@@ -189,7 +189,7 @@ class SerialApp(QtWidgets.QMainWindow):
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
 
             # Stimulation loop
-            for i in 1:numLoops):
+            for i in 1:numLoops:
                 self.arduinoSerial.write(b'START1')
                 time.sleep(iti)
                 progress = int(round((i / numLoops) * 100))
