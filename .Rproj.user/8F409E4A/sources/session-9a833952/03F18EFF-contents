@@ -181,6 +181,8 @@ class SerialApp(QtWidgets.QMainWindow):
         if not self.isRunning:
             self.isRunning = True
             self.startButton.setStyleSheet("background-color: green")
+            QtWidgets.QApplication.processEvents() 
+            
             ipi = int(self.ipiDial.value())
             numLoops = int(self.nrepDial.value())
             iti = int(self.itiDial.value())
