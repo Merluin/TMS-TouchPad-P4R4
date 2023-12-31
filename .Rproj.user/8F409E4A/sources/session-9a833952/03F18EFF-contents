@@ -215,13 +215,13 @@ class SerialApp(QtWidgets.QMainWindow):
     
                 self.arduinoSerial.write(b'START1')
                 # Update UI
-                self.updateProgressBar(i, numLoops)
+                # self.updateProgressBar(i, numLoops)
                 # Calculate the remaining time to sleep
                 elapsed_time = time.time() - start_time
                 remaining_time = max(0, iti - elapsed_time)
                 time.sleep(remaining_time)
     
-        self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
+        # self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
         self.startButton.setText("Start")
         
