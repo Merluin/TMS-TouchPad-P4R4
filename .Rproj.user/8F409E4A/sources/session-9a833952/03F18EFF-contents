@@ -213,10 +213,9 @@ class SerialApp(QtWidgets.QMainWindow):
             if not self.isRunning:
                 break
             self.arduinoSerial.write(b'START1')
-            progress = int((i / numLoops) * 100)
-            self.progressBar.setValue(progress)
-            QtWidgets.QApplication.processEvents()
-             # Calculate the remaining time to sleep
+            # Update UI
+            self.updateProgressBar(i, numLoops)
+            # Calculate the remaining time to sleep
             elapsed_time = time.time() - start_time
             remaining_time = max(0, iti - elapsed_time)
             time.sleep(remaining_time)
@@ -224,6 +223,11 @@ class SerialApp(QtWidgets.QMainWindow):
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
         self.startButton.setStyleSheet("background-color: gray")
+        
+    def updateProgressBar(self, i, numLoops):
+        # Update the progress bar in the main thread
+        progress = int((i / numLoops) * 100)
+        self.progressBar.setValue(progress)
         
     def pauseLoop(self):
         self.loopPaused.clear()  # Clear the event to pause the loop
