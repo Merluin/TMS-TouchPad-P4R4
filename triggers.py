@@ -128,8 +128,8 @@ class SerialApp(QtWidgets.QMainWindow):
         self.setWindowTitle('Serial Communication App')
         
         def adjustSplitter(self):
-        window_width = self.width()
-        self.splitter.setSizes([window_width // 2, window_width // 2])
+          window_width = self.width()
+          self.splitter.setSizes([window_width // 2, window_width // 2])
 
     def createDialLayout(self, parentLayout, dialName, minValue, maxValue, defaultValue):
         # Create a horizontal layout for the dial and its value label
