@@ -2,6 +2,7 @@ import sys
 import serial
 from PyQt5 import QtWidgets, QtCore
 import RPi.GPIO as GPIO
+import time
 
 # Set up GPIO using BCM numbering
 GPIO.setmode(GPIO.BCM)
@@ -20,6 +21,7 @@ def relay_off():
 class SerialApp(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
+        self.isRunning = False
 
         # Initialize the serial connection
         self.arduinoSerial = serial.Serial()
@@ -67,13 +69,13 @@ class SerialApp(QtWidgets.QMainWindow):
         buttonsLayout = QtWidgets.QHBoxLayout()
 
         # Create buttons and add them to the buttons layout
-        self.ts_button = QtWidgets.QPushButton('Ts')
-        self.ts_button.clicked.connect(self.TsButtonPushed)
-        buttonsLayout.addWidget(self.ts_button)
-
         self.cs_button = QtWidgets.QPushButton('Cs')
         self.cs_button.clicked.connect(self.CsButtonPushed)
         buttonsLayout.addWidget(self.cs_button)
+        
+         self.ts_button = QtWidgets.QPushButton('Ts')
+        self.ts_button.clicked.connect(self.TsButtonPushed)
+        buttonsLayout.addWidget(self.ts_button)
 
         self.ttl_button = QtWidgets.QPushButton('Bio')
         self.ttl_button.clicked.connect(self.TTLButtonPushed)
@@ -100,10 +102,18 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Create Start, Pause, Stop buttons in the right panel
         self.startButton = QtWidgets.QPushButton('Start')
+        self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
+
+        # Create a progress bar under the Start button
+        self.progressBar = QtWidgets.QProgressBar()
+        rightLayout.addWidget(self.progressBar)
+
         self.pauseButton = QtWidgets.QPushButton('Pause')
         rightLayout.addWidget(self.pauseButton)
+
         self.stopButton = QtWidgets.QPushButton('Stop')
+        self.stopButton.clicked.connect(self.stopButtonPushed)
         rightLayout.addWidget(self.stopButton)
 
         # Add right panel to splitter
@@ -166,6 +176,33 @@ class SerialApp(QtWidgets.QMainWindow):
             self.triggercatch.setText('Bio pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
+            
+    def startButtonPushed(self):
+        if not self.isRunning:
+            self.isRunning = True
+            self.startButton.setStyleSheet("background-color: green")
+            ipi = self.ipiDial.value()
+            numLoops = self.nrepDial.value()
+            iti = self.itiDial.value()
+
+            # Send the IPI command
+            self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
+
+            # Stimulation loop
+            for i in range(numLoops):
+                self.arduinoSerial.write(b'START1')
+                time.sleep(iti)
+                progress = (i / numLoops) * 100
+                self.progressBar.setValue(progress)
+
+            self.progressBar.setValue(100)  # Set progress bar to 100% at the end
+
+    def stopButtonPushed(self):
+        if self.isRunning:
+            self.isRunning = False
+            self.stopButton.setStyleSheet("background-color: red")
+            self.startButton.setStyleSheet("background-color: gray")
+            self.progressBar.setValue(0)
 
     def closeEvent(self, event):
         relay_off()  # Turn off the relay when the application is closed

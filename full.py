@@ -113,66 +113,35 @@ class ppTMSApp(QMainWindow):
         # This method runs background tasks without blocking the GUI thread
         pass
 
-    def StartButtonPushed(self):
+    def startButtonPushed(self):
         if not self.isRunning:
-            try:
-                if self.arduinoSerial and self.arduinoSerial.is_open:
-                    # Open the serial connection
-                    self.arduinoSerial.write(b'OPEN\n')
 
-                    # Pause to ensure the Arduino is ready
-                    QTimer.singleShot(2000, lambda: self.startcatch.setText(' '))
-
-                    # Update the Lamp status and display a message
+                    # Update status
                     self.isRunning = True
-                    self.start_button.setStyleSheet("background-color: green")
-                    ipi = self.iti_spinner.value()
-                    numLoops = self.nrep_spinner.value()
-                    iti = self.iti_spinner.value()
+                    self.startButton.setStyleSheet("background-color: green")
+                    ipi = value of IPI dial
+                    numLoops = value of nREP dial
+                    iti = value of ITI dial
+                    
+                    # Send the IPI command
+                    self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
+                    
+                    # stimulation:
+                    for i in numLoops:
+                      
+                      self.arduinoSerial.write(b'START1')
+                      wait(iti)
+                      progress = (i / numLoops) * 100
+                      progressbarwidget(progress)
 
-                    print('START')
-                    self.label.setText('START')
-
-                    # Send the ITI command
-                    self.arduinoSerial.write(f'SET,IPI1,{ipi}\n'.encode())
-                    QTimer.singleShot(1000, lambda: self.runLoop(numLoops, iti))
-
-            except Exception as e:
-                self.startcatch.setText('!!! Connect Serial !!!')
-
-    def runLoop(self, numLoops, iti):
-        def loop_iteration(i):
-            if not self.isRunning:
-                return  # Stop button pressed
-            if self.pausa:
-                while self.pausa:
-                    pass
-
-            self.labelrep.setText(str(i))
-
-            # Send the start command
-            self.arduinoSerial.write(b'START1')
-            # Update the progression gauge
-            progress = (i / numLoops) * 100
-            print(progress)
-            QTimer.singleShot(iti, lambda: loop_iteration(i + 1))
-
-        loop_iteration(1)
 
     def StopButtonPushed(self):
         if self.isRunning:
-            # Update the Lamp status and display a message
             self.isRunning = False
-            self.stop_button.setStyleSheet("background-color: red")
-            self.start_button.setStyleSheet("background-color: gray")
-            self.labelrep.setText("0")
+            self.stopbutton.setStyleSheet("background-color: red")
+            self.startbutton.setStyleSheet("background-color: gray")
+            progressbarwidget("0")
 
-            print('STOP')
-            self.label.setText('STOP')
-
-            # Close the serial connection
-            if self.arduinoSerial and self.arduinoSerial.is_open:
-                self.arduinoSerial.close()
 
     def PauseButtonPushed(self):
         # Update the Lamp status and display a message
