@@ -191,7 +191,7 @@ class SerialApp(QtWidgets.QMainWindow):
     def startButtonPushed(self):
         if not self.isRunning:
             self.isRunning = True
-            self.startButton.setStyleSheet("background-color:#ff0000;")
+            self.startButton.setText("Started")
             ipi = self.ipiDial.value()
             
             # Send the IPI command
@@ -223,7 +223,7 @@ class SerialApp(QtWidgets.QMainWindow):
     
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
-        self.startButton.setStyleSheet("background-color: gray")
+        self.startButton.setText("Start")
         
     def updateProgressBar(self, i, numLoops):
         # Update the progress bar in the main thread
@@ -248,7 +248,8 @@ class SerialApp(QtWidgets.QMainWindow):
 
     def stopButtonPushed(self):
         self.isRunning = False
-        self.stopButton.setStyleSheet("background-color: red")
+        self.startButton.setText("Start")
+        self.progressBar.setValue(0)
         with self.loopCondition:
             self.loopPaused.set()  # Make sure the loop resumes if it was paused
             self.loopCondition.notify()
