@@ -195,8 +195,9 @@ class SerialApp(QtWidgets.QMainWindow):
             self.thread.start()
 
     def runStimulationLoop(self):
-            numLoops = self.nrepDial.value()
-            iti = self.itiDial.value()
+        numLoops = self.nrepDial.value()
+        iti = self.itiDial.value()
+            
         for i in range(numLoops):
             if not self.isRunning:
                 break  # Exit the loop if the stop button has been pressed
