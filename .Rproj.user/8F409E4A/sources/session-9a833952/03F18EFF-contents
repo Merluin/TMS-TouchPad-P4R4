@@ -130,6 +130,8 @@ class SerialApp(QtWidgets.QMainWindow):
         self.loopPaused = threading.Event()
         self.loopPaused.set()  # Initially set to True to allow loop execution
         self.loopCondition = threading.Condition()
+        self.pauseButton.clicked.connect(self.pauseButtonPushed)
+
         
     def adjustSplitter(self):
       window_width = self.width()
@@ -201,19 +203,21 @@ class SerialApp(QtWidgets.QMainWindow):
     def runStimulationLoop(self):
         numLoops = self.nrepDial.value()
         iti = self.itiDial.value()
-            
+    
         for i in range(numLoops):
             with self.loopCondition:
-                if not self.isRunning:
-                    break
                 while not self.loopPaused.is_set():
-                  self.loopCondition.wait()
-                  self.arduinoSerial.write(b'START1')
-                  time.sleep(iti)
-                  progress = int((i / numLoops) * 100)
-                  self.progressBar.setValue(progress)
-                  QtWidgets.QApplication.processEvents()
-
+                    self.loopCondition.wait()  # Wait if paused
+    
+            if not self.isRunning:
+                break
+    
+            self.arduinoSerial.write(b'START1')
+            time.sleep(iti)
+            progress = int((i / numLoops) * 100)
+            self.progressBar.setValue(progress)
+            QtWidgets.QApplication.processEvents()
+    
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
         self.startButton.setStyleSheet("background-color: gray")
