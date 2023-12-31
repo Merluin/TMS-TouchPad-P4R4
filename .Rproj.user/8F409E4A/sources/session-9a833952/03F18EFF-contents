@@ -213,10 +213,12 @@ class SerialApp(QtWidgets.QMainWindow):
                 break
     
             self.arduinoSerial.write(b'START1')
-            time.sleep(iti)
+            
             progress = int((i / numLoops) * 100)
             self.progressBar.setValue(progress)
             QtWidgets.QApplication.processEvents()
+            
+            time.sleep(iti)
     
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
