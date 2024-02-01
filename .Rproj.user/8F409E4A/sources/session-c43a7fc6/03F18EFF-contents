@@ -54,13 +54,13 @@ class SerialApp(QtWidgets.QMainWindow):
         leftLayout.addWidget(leftPanelLabel)
 
         # Create layout and widgets for IPI Dial (default value 4)
-        self.createDialLayout(leftLayout, "IPI", 0, 1000, 300)
+        self.createDialLayout(leftLayout, "IPI", 0, 200, 40)
 
         # Create layout and widgets for Nrep Dial (default value 90)
-        self.createDialLayout(leftLayout, "Nrep", 0, 200, 10)
+        self.createDialLayout(leftLayout, "Nrep", 0, 150, 90)
 
         # Create layout and widgets for ITI Dial (default value 10)
-        self.createDialLayout(leftLayout, "ITI", 0, 120, 5)
+        self.createDialLayout(leftLayout, "ITI", 0, 60, 10)
 
         # Add a label for "Trigger buttons:"
         triggerButtonsLabel = QtWidgets.QLabel("Trigger buttons:")
@@ -212,7 +212,7 @@ class SerialApp(QtWidgets.QMainWindow):
                 if not self.isRunning:
                     break  # Break the loop if stop button was pressed
                 start_time = time.time()
-                self.arduinoSerial.write(b'START1')
+                self.arduinoSerial.write(b'1')
                 # Update UI
                 # self.updateProgressBar(i, numLoops)
                 # Calculate the remaining time to sleep
