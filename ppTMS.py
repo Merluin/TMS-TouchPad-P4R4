@@ -123,12 +123,12 @@ class SerialApp(QtWidgets.QMainWindow):
         
         self.pauseButton = QtWidgets.QPushButton('Pause')
         self.pauseButton.setFixedHeight(80)  
-        self.startButton.setFont(font)
+        self.pauseButton.setFont(font)
         rightLayout.addWidget(self.pauseButton)
 
         self.stopButton = QtWidgets.QPushButton('Stop')
         self.stopButton.setFixedHeight(80)
-        self.startButton.setFont(font)
+        self.stopButton.setFont(font)
         self.stopButton.clicked.connect(self.stopButtonPushed)
         rightLayout.addWidget(self.stopButton)
         
@@ -170,6 +170,7 @@ class SerialApp(QtWidgets.QMainWindow):
         sliderLayout.addWidget(slider)
 
         valueLabel = QtWidgets.QLabel(str(defaultValue))
+        valueLabel.setFont(font)
         sliderLayout.addWidget(valueLabel)
 
         parentLayout.addLayout(sliderLayout)
