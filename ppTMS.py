@@ -7,8 +7,8 @@ import time
 import threading
 
 font = QFont()
-font.setPointSize(12)
-
+font.setPointSize(18)
+font.setBold(True)
 
 # Relais Alim Arduino
 GPIO.setmode(GPIO.BCM)
