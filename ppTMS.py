@@ -158,9 +158,9 @@ class SerialApp(QtWidgets.QMainWindow):
 
     def createSliderLayout(self, parentLayout, sliderName, minValue, maxValue, defaultValue):
         sliderLayout = QtWidgets.QHBoxLayout()
-        sliderLayout.setFont(font)
 
         sliderNameLabel = QtWidgets.QLabel(sliderName)
+        sliderNameLabel.setFont(font)
         sliderLayout.addWidget(sliderNameLabel)
 
         slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
