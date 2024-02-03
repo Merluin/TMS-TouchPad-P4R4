@@ -97,12 +97,15 @@ class SerialApp(QtWidgets.QMainWindow):
         self.startButton = QtWidgets.QPushButton('Start')
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
+        
+ 
 
         # Create a progress bar under the Start button
         self.progressBar = QtWidgets.QProgressBar()
         rightLayout.addWidget(self.progressBar)
 
         self.pauseButton = QtWidgets.QPushButton('Pause')
+        self.pauseButton.setFixedSize(100, 50)  # Width: 100, Height: 50
         rightLayout.addWidget(self.pauseButton)
 
         self.stopButton = QtWidgets.QPushButton('Stop')
