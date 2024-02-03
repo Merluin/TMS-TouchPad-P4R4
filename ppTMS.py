@@ -178,7 +178,7 @@ class SerialApp(QtWidgets.QMainWindow):
         if not self.isRunning:
             self.isRunning = True
             self.startButton.setText("Started")
-            ipi = self.ipiSlider.value()
+            ipi = 4#self.ipiSlider.value()
             
             # Send the IPI command
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
