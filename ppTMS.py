@@ -98,7 +98,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Create a progress bar under the Start button
         self.progressBar = QtWidgets.QProgressBar()
-        self.pauseButton.setFixedSize(250, 50)  
+        self.progressBar.setFixedSize(250, 50)  
         rightLayout.addWidget(self.progressBar)
 
         # Create Start, Pause, Stop buttons in the right panel
