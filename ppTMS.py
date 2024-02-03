@@ -95,6 +95,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Create Start, Pause, Stop buttons in the right panel
         self.startButton = QtWidgets.QPushButton('Start')
+        self.startButton.setFixedSize(250, 150)  # Width: 100, Height: 50
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
         
@@ -105,10 +106,11 @@ class SerialApp(QtWidgets.QMainWindow):
         rightLayout.addWidget(self.progressBar)
 
         self.pauseButton = QtWidgets.QPushButton('Pause')
-        self.pauseButton.setFixedSize(100, 50)  # Width: 100, Height: 50
+        self.pauseButton.setFixedSize(250, 150)  # Width: 100, Height: 50
         rightLayout.addWidget(self.pauseButton)
 
         self.stopButton = QtWidgets.QPushButton('Stop')
+        self.stopButton.setFixedSize(250, 150)  # Width: 100, Height: 50
         self.stopButton.clicked.connect(self.stopButtonPushed)
         rightLayout.addWidget(self.stopButton)
 
