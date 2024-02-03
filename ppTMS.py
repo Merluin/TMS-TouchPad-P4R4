@@ -175,10 +175,11 @@ class SerialApp(QtWidgets.QMainWindow):
             self.triggercatch.setText('!!! Serial is not connected !!!')
             
     def startButtonPushed(self):
+        ipi = self.ipiSlider.value()
         if not self.isRunning:
             self.isRunning = True
             self.startButton.setText("Started")
-            ipi = 4#self.ipiSlider.value()
+           
             
             # Send the IPI command
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
@@ -206,7 +207,7 @@ class SerialApp(QtWidgets.QMainWindow):
                 remaining_time = max(0, iti - elapsed_time)
                 time.sleep(remaining_time)
     
-        # self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
+        self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
         self.startButton.setText("Start")
         
