@@ -104,7 +104,7 @@ class SerialApp(QtWidgets.QMainWindow):
         rightLayout = QtWidgets.QVBoxLayout(rightPanel)
 
         # Add "ppTMS GUI" label at the top of the right panel
-        rightPanelLabel = QtWidgets.QLabel("ppTMS GUI")
+        rightPanelLabel = QtWidgets.QLabel("ppTMS")
         rightPanelLabel.setFont(font)
         rightPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
         rightLayout.addWidget(rightPanelLabel)
@@ -143,8 +143,8 @@ class SerialApp(QtWidgets.QMainWindow):
         mainLayout.addWidget(splitter)
 
         # Set the size of the window
-        self.setGeometry(100, 100, 800, 400)
-        self.setWindowTitle('Serial Communication App')
+        self.setGeometry(100, 100, 600, 400)
+        self.setWindowTitle('GUI ppTMS')
         
         self.loopPaused = threading.Event()
         self.loopPaused.set()  # Initially set to True to allow loop execution
