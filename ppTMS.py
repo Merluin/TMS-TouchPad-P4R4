@@ -1,61 +1,79 @@
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.slider import Slider
-from kivy.uix.label import Label
-from kivy.uix.button import Button
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSlider, QLabel, QPushButton
 
-class ppTMSApp(App):
-  def build(self):
-  # Main layout
-  main_layout = BoxLayout(orientation='horizontal', padding=10)
+class ppTMSApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    
+    def initUI(self):
+        # Vertical layout for the entire app
+        v_layout = QVBoxLayout()
 
-# Left side layout for sliders and buttons
-left_layout = BoxLayout(orientation='vertical', size_hint_x=None, width=300)
+        # Horizontal layout for parameters and ppTMS
+        h_layout_params = QHBoxLayout()
+        v_layout_params = QVBoxLayout()
+        h_layout_ppTMS = QHBoxLayout()
 
-# Sliders and their labels
-for text in ["IPI", "Rep", "ITI"]:
-  slider_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=50)
-slider = Slider(min=0, max=100, value=40)  # Example values
-slider.id = text.lower()  # Assign an id to each slider
-slider.bind(value=self.on_slider_value)
-label = Label(text=text, size_hint_x=None, width=100)
-value_label = Label(text=str(slider.value))
-slider_layout.add_widget(label)
-slider_layout.add_widget(slider)
-slider_layout.add_widget(value_label)
-left_layout.add_widget(slider_layout)
+        # Creating sliders
+        self.slider_ipi = QSlider()
+        self.slider_rep = QSlider()
+        self.slider_itl = QSlider()
 
-# Buttons TS, CS, Bio
-for text in ["TS", "CS", "Bio"]:
-  btn = Button(text=text, size_hint_y=None, height=50)
-left_layout.add_widget(btn)
+        # Slider labels
+        label_ipi = QLabel('IPI')
+        label_rep = QLabel('Rep')
+        label_itl = QLabel('ITI')
 
-# Add the left layout to the main layout
-main_layout.add_widget(left_layout)
+        # Adding sliders and labels to the layout
+        v_layout_params.addWidget(label_ipi)
+        v_layout_params.addWidget(self.slider_ipi)
+        v_layout_params.addWidget(label_rep)
+        v_layout_params.addWidget(self.slider_rep)
+        v_layout_params.addWidget(label_itl)
+        v_layout_params.addWidget(self.slider_itl)
 
-# Right side layout for ppTMS, START, PAUSE, STOP
-right_layout = BoxLayout(orientation='vertical', padding=10)
+        # Creating buttons
+        self.btn_ts = QPushButton('TS')
+        self.btn_cs = QPushButton('CS')
+        self.btn_bio = QPushButton('Bio')
 
-# ppTMS label and percentage
-pptms_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=50)
-pptms_label = Label(text="ppTMS", size_hint_x=None, width=100)
-pptms_value = Label(text="0%")
-pptms_layout.add_widget(pptms_label)
-pptms_layout.add_widget(pptms_value)
-right_layout.add_widget(pptms_layout)
+        # Adding buttons to the layout
+        v_layout_params.addWidget(self.btn_ts)
+        v_layout_params.addWidget(self.btn_cs)
+        v_layout_params.addWidget(self.btn_bio)
 
-# START, PAUSE, STOP buttons
-for text in ["START", "PAUSE", "STOP"]:
-  btn = Button(text=text, size_hint_y=None, height=100)
-right_layout.add_widget(btn)
+        # Creating ppTMS label and buttons
+        self.label_ppTMS = QLabel('ppTMS\n0%')
+        self.btn_start = QPushButton('START')
+        self.btn_pause = QPushButton('PAUSE')
+        self.btn_stop = QPushButton('STOP')
 
-# Add the right layout to the main layout
-main_layout.add_widget(right_layout)
+        # Adding ppTMS label and buttons to the layout
+        h_layout_ppTMS.addWidget(self.label_ppTMS)
+        h_layout_ppTMS.addWidget(self.btn_start)
+        h_layout_ppTMS.addWidget(self.btn_pause)
+        h_layout_ppTMS.addWidget(self.btn_stop)
 
-return main_layout
+        # Adding sublayouts to the main layout
+        h_layout_params.addLayout(v_layout_params)
+        h_layout_params.addLayout(h_layout_ppTMS)
+        v_layout.addLayout(h_layout_params)
 
-def on_slider_value(self, instance, value):
-  instance.parent.children[0].text = f"{int(value)}"  # Update the label with the slider value
+        # Set the main layout to the window
+        self.setLayout(v_layout)
+
+        # Window title
+        self.setWindowTitle('ppTMS App')
+
+        # Window dimensions
+        self.setGeometry(300, 300, 600, 300)
+
+def main():
+    app = QApplication(sys.argv)
+    ex = ppTMSApp()
+    ex.show()
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
-  ppTMSApp().run()
+    main()
