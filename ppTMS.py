@@ -63,17 +63,17 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Create buttons and add them to the buttons layout
         self.cs_button = QtWidgets.QPushButton('Cs')
-        self.cs_button.setFixedSize(50, 50)  
+        self.cs_button.setFixedSize(80, 50)  
         self.cs_button.clicked.connect(self.CsButtonPushed)
         buttonsLayout.addWidget(self.cs_button)
         
         self.ts_button = QtWidgets.QPushButton('Ts')
-        self.ts_button.setFixedSize(50, 50)  
+        self.ts_button.setFixedSize(80, 50)  
         self.ts_button.clicked.connect(self.TsButtonPushed)
         buttonsLayout.addWidget(self.ts_button)
 
         self.ttl_button = QtWidgets.QPushButton('Bio')
-        self.ttl_button.setFixedSize(50, 50)  
+        self.ttl_button.setFixedSize(80, 50)  
         self.ttl_button.clicked.connect(self.TTLButtonPushed)
         buttonsLayout.addWidget(self.ttl_button)
 
@@ -103,16 +103,16 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Create Start, Pause, Stop buttons in the right panel
         self.startButton = QtWidgets.QPushButton('Start')
-        self.startButton.setFixedSize(250, 100)  
+        self.startButton.setFixedSize(250, 80)  
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
         
         self.pauseButton = QtWidgets.QPushButton('Pause')
-        self.pauseButton.setFixedSize(250, 100)  
+        self.pauseButton.setFixedSize(250, 80)  
         rightLayout.addWidget(self.pauseButton)
 
         self.stopButton = QtWidgets.QPushButton('Stop')
-        self.stopButton.setFixedSize(250, 100)  
+        self.stopButton.setFixedSize(250, 80)  
         self.stopButton.clicked.connect(self.stopButtonPushed)
         rightLayout.addWidget(self.stopButton)
 
