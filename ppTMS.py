@@ -52,6 +52,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Add "Settings" label at the top of the left panel
         leftPanelLabel = QtWidgets.QLabel("Settings")
+        leftPanelLabel.setFont(font)
         leftPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
         leftLayout.addWidget(leftPanelLabel)
 
@@ -61,6 +62,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Add a label for "Trigger buttons:"
         triggerButtonsLabel = QtWidgets.QLabel("Trigger buttons:")
+        triggerButtonsLabel.setFont(font)
         leftLayout.addWidget(triggerButtonsLabel)
 
         # Create a horizontal layout for buttons
@@ -103,6 +105,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Add "ppTMS GUI" label at the top of the right panel
         rightPanelLabel = QtWidgets.QLabel("ppTMS GUI")
+        rightPanelLabel.setFont(font)
         rightPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
         rightLayout.addWidget(rightPanelLabel)
 
@@ -113,16 +116,19 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Create Start, Pause, Stop buttons in the right panel
         self.startButton = QtWidgets.QPushButton('Start')
+        self.startButton.setFont(font)
         self.startButton.setFixedHeight(80) 
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
         
         self.pauseButton = QtWidgets.QPushButton('Pause')
         self.pauseButton.setFixedHeight(80)  
+        self.startButton.setFont(font)
         rightLayout.addWidget(self.pauseButton)
 
         self.stopButton = QtWidgets.QPushButton('Stop')
-        self.stopButton.setFixedHeight(80)  
+        self.stopButton.setFixedHeight(80)
+        self.startButton.setFont(font)
         self.stopButton.clicked.connect(self.stopButtonPushed)
         rightLayout.addWidget(self.stopButton)
         
@@ -152,6 +158,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
     def createSliderLayout(self, parentLayout, sliderName, minValue, maxValue, defaultValue):
         sliderLayout = QtWidgets.QHBoxLayout()
+        sliderLayout.setFont(font)
 
         sliderNameLabel = QtWidgets.QLabel(sliderName)
         sliderLayout.addWidget(sliderNameLabel)
