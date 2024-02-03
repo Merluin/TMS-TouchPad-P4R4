@@ -5,20 +5,17 @@ import RPi.GPIO as GPIO
 import time
 import threading
 
-# Set up GPIO using BCM numbering
+# Relais Alim Arduino
 GPIO.setmode(GPIO.BCM)
-
-# Set up pin 17 as an output
 GPIO.setup(17, GPIO.OUT)
 
-# Function to turn the relay ON
-def relay_on():
-    GPIO.output(17, GPIO.HIGH)  # Set GPIO 17 to HIGH
+def relay_on(): # Function to turn the relay ON
+    GPIO.output(17, GPIO.HIGH) 
+    
+def relay_off():# Function to turn the relay OFF
+    GPIO.output(17, GPIO.LOW) 
 
-# Function to turn the relay OFF
-def relay_off():
-    GPIO.output(17, GPIO.LOW)   # Set GPIO 17 to LOW
-
+# App
 class SerialApp(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -26,7 +23,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Initialize the serial connection
         self.arduinoSerial = serial.Serial()
-        self.arduinoSerial.baudrate = 115200
+        self.arduinoSerial.baudrate = 115200 # need to mach the Arduino code
         self.arduinoSerial.timeout = 1
         self.arduinoSerial.port = '/dev/ttyS0'  # Replace with the correct port
 
@@ -44,7 +41,7 @@ class SerialApp(QtWidgets.QMainWindow):
         # Create splitter
         splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
 
-        # Left Panel for Dials and Buttons
+        # Left Panel for Sliders and Buttons
         leftPanel = QtWidgets.QWidget()
         leftLayout = QtWidgets.QVBoxLayout(leftPanel)
 
@@ -181,7 +178,7 @@ class SerialApp(QtWidgets.QMainWindow):
         if not self.isRunning:
             self.isRunning = True
             self.startButton.setText("Started")
-            ipi = self.ipiDial.value()
+            ipi = self.ipiSlider.value()
             
             # Send the IPI command
             self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
@@ -190,8 +187,8 @@ class SerialApp(QtWidgets.QMainWindow):
             self.thread.start()
 
     def runStimulationLoop(self):
-        numLoops = self.nrepDial.value()
-        iti = self.itiDial.value()
+        numLoops = self.nrepSlider.value()
+        iti = self.itiSlider.value()
     
         for i in range(numLoops):
     
@@ -203,7 +200,7 @@ class SerialApp(QtWidgets.QMainWindow):
                 start_time = time.time()
                 self.arduinoSerial.write(b'1')
                 # Update UI
-                # self.updateProgressBar(i, numLoops)
+                self.updateProgressBar(i, numLoops)
                 # Calculate the remaining time to sleep
                 elapsed_time = time.time() - start_time
                 remaining_time = max(0, iti - elapsed_time)
