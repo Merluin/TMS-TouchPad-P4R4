@@ -115,6 +115,10 @@ class SerialApp(QtWidgets.QMainWindow):
         self.stopButton.setFixedSize(250, 80)  
         self.stopButton.clicked.connect(self.stopButtonPushed)
         rightLayout.addWidget(self.stopButton)
+        
+        # Spacer at the bottom (expanding spacer)
+        bottomSpacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        rightLayout.addItem(bottomSpacer)
 
         # Add right panel to splitter
         splitter.addWidget(rightPanel)
