@@ -145,7 +145,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
         # Set the size of the window
         self.setGeometry(100, 100, 600, 400)
-        self.setWindowTitle('GUI ppTMS')
+        self.setWindowTitle('GUI ppTMS Pi4R4')
         
         self.loopPaused = threading.Event()
         self.loopPaused.set()  # Initially set to True to allow loop execution
