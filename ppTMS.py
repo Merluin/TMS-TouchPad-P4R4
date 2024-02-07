@@ -215,8 +215,6 @@ class SerialApp(QtWidgets.QMainWindow):
         
         if not self.isRunning:
             self.isRunning = True
-            i = 0
-            self.startButton.setText(f"rep: {i}")
            
             
             # Send the IPI command
@@ -230,7 +228,8 @@ class SerialApp(QtWidgets.QMainWindow):
         iti = self.itiSpinBox.value()
     
         for i in range(numLoops):
-    
+                self.startButton.setText(f"rep: {i}")
+
             with self.loopCondition:
                 while not self.loopPaused.is_set():
                     self.loopCondition.wait()  # Wait if paused
