@@ -228,7 +228,6 @@ class SerialApp(QtWidgets.QMainWindow):
         iti = self.itiSpinBox.value()
     
         for i in range(numLoops):
-                self.startButton.setText(f"rep: {i}")
 
             with self.loopCondition:
                 while not self.loopPaused.is_set():
@@ -236,6 +235,7 @@ class SerialApp(QtWidgets.QMainWindow):
                 if not self.isRunning:
                     break  # Break the loop if stop button was pressed
                 start_time = time.time()
+                self.updateStartbutton(i)
                 self.arduinoSerial.write(b'1')
                 # Update UI
                 self.updateProgressBar(i, numLoops)
@@ -252,6 +252,10 @@ class SerialApp(QtWidgets.QMainWindow):
         # Update the progress bar in the main thread
         progress = int((i / numLoops) * 100)
         self.progressBar.setValue(progress)
+        
+    def updateStartbutton(self, i):
+      self.startButton.setText(f"rep: {i}")
+
         
     def pauseLoop(self):
         self.loopPaused.clear()  # Clear the event to pause the loop
