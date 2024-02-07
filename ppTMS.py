@@ -61,7 +61,7 @@ class SerialApp(QtWidgets.QMainWindow):
         self.createSliderLayout(leftLayout, "ITI", 0, 60, 10)
 
         # Add a label for "Trigger buttons:"
-        triggerButtonsLabel = QtWidgets.QLabel("Trigger buttons:")
+        triggerButtonsLabel = QtWidgets.QLabel("Test:")
         triggerButtonsLabel.setFont(font)
         leftLayout.addWidget(triggerButtonsLabel)
 
@@ -112,6 +112,7 @@ class SerialApp(QtWidgets.QMainWindow):
         # Create a progress bar under the Start button
         self.progressBar = QtWidgets.QProgressBar()
         self.progressBar.setFixedHeight(50)  
+        self.progressBar.setFont(font)
         rightLayout.addWidget(self.progressBar)
 
         # Create Start, Pause, Stop buttons in the right panel
@@ -211,7 +212,7 @@ class SerialApp(QtWidgets.QMainWindow):
            
             
             # Send the IPI command
-            self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
+            self.arduinoSerial.write(f'SET,IPI1,{ipi}\n'.encode())
             # Start the stimulation loop in a separate thread
             self.thread = threading.Thread(target=self.runStimulationLoop)
             self.thread.start()
