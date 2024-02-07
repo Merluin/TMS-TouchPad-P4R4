@@ -215,6 +215,7 @@ class SerialApp(QtWidgets.QMainWindow):
         
         if not self.isRunning:
             self.isRunning = True
+            i = 0
             self.startButton.setText(f"rep: {i}")
            
             
