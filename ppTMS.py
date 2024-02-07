@@ -221,7 +221,7 @@ class SerialApp(QtWidgets.QMainWindow):
             self.thread.start()
 
     def runStimulationLoop(self):
-        numLoops = self.nrepSpinBoxr.value()
+        numLoops = self.nrepSpinBox.value()
         iti = self.itiSpinBox.value()
     
         for i in range(numLoops):
