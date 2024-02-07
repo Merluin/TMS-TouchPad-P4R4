@@ -209,7 +209,7 @@ class SerialApp(QtWidgets.QMainWindow):
         
         if not self.isRunning:
             self.isRunning = True
-            self.startButton.setText("Started")
+            self.startButton.setText(f"IPI: {ipi}")
            
             
             # Send the IPI command
