@@ -179,7 +179,7 @@ class SerialApp(QtWidgets.QMainWindow):
         setattr(self, f"{spinBoxName.lower()}SpinBox", spinBox)
         setattr(self, f"{spinBoxName.lower()}ValueLabel", valueLabel)
 
-     def spinBoxValueChanged(self, value, name):
+    def spinBoxValueChanged(self, value, name):
         label = getattr(self, f"{name.lower()}ValueLabel")
         label.setText(str(value))
 
