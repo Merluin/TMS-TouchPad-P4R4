@@ -206,9 +206,10 @@ class SerialApp(QtWidgets.QMainWindow):
             
     def startButtonPushed(self):
         ipi = self.ipiSlider.value()
+        
         if not self.isRunning:
             self.isRunning = True
-            self.startButton.setText("Started")
+            self.startButton.setText(ipi)
            
             
             # Send the IPI command
@@ -220,7 +221,6 @@ class SerialApp(QtWidgets.QMainWindow):
     def runStimulationLoop(self):
         numLoops = self.nrepSlider.value()
         iti = self.itiSlider.value()
-        print(iti)
     
         for i in range(numLoops):
     
