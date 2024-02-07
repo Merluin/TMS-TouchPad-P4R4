@@ -191,21 +191,21 @@ class SerialApp(QtWidgets.QMainWindow):
 
     def TsButtonPushed(self):
         try:
-            self.arduinoSerial.write(b'SET,test,1')
+            self.arduinoSerial.write(b'SET,test,1\n')
             self.triggercatch.setText('Ts pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def CsButtonPushed(self):
         try:
-            self.arduinoSerial.write(b'SET,test,2')
+            self.arduinoSerial.write(b'SET,test,2\n')
             self.triggercatch.setText('Cs pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def TTLButtonPushed(self):
         try:
-            self.arduinoSerial.write(b'SET,test,3')
+            self.arduinoSerial.write(b'SET,test,3\n')
             self.triggercatch.setText('Bio pressed')
         except Exception as e:
             self.triggercatch.setText('!!! Serial is not connected !!!')
@@ -215,7 +215,7 @@ class SerialApp(QtWidgets.QMainWindow):
         
         if not self.isRunning:
             self.isRunning = True
-            self.startButton.setText(f"IPI: {ipi}")
+            self.startButton.setText(f"rep: {i}")
            
             
             # Send the IPI command
