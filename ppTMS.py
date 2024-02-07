@@ -213,7 +213,7 @@ class SerialApp(QtWidgets.QMainWindow):
            
             
             # Send the IPI command
-            self.arduinoSerial.write(f'SET,IPI1,{ipi}'.encode())
+            self.arduinoSerial.write(f'SET,IPI1,{ipi}\n'.encode())
             # Start the stimulation loop in a separate thread
             self.thread = threading.Thread(target=self.runStimulationLoop)
             self.thread.start()
