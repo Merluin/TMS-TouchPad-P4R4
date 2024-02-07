@@ -56,9 +56,9 @@ class SerialApp(QtWidgets.QMainWindow):
         leftPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
         leftLayout.addWidget(leftPanelLabel)
 
-        self.createSliderLayout(leftLayout, "IPI", 0, 200, 40)
-        self.createSliderLayout(leftLayout, "Nrep", 0, 150, 90)
-        self.createSliderLayout(leftLayout, "ITI", 0, 60, 10)
+        self.createSpinBoxLayout(leftLayout, "IPI", 0, 200, 40)
+        self.createSpinBoxLayout(leftLayout, "Nrep", 0, 150, 90)
+        self.createSpinBoxLayout(leftLayout, "ITI", 0, 60, 10)
 
         # Add a label for "Trigger buttons:"
         triggerButtonsLabel = QtWidgets.QLabel("Test:")
@@ -157,29 +157,29 @@ class SerialApp(QtWidgets.QMainWindow):
       window_width = self.width()
       self.splitter.setSizes([window_width // 2, window_width // 2])
 
-    def createSliderLayout(self, parentLayout, sliderName, minValue, maxValue, defaultValue):
-        sliderLayout = QtWidgets.QHBoxLayout()
+    def createSpinBoxLayout(self, parentLayout, spinBoxName, minValue, maxValue, defaultValue):
+        spinBoxLayout = QtWidgets.QHBoxLayout()
 
-        sliderNameLabel = QtWidgets.QLabel(sliderName)
-        sliderNameLabel.setFont(font)
-        sliderLayout.addWidget(sliderNameLabel)
+        spinBoxNameLabel = QtWidgets.QLabel(spinBoxName)
+        spinBoxNameLabel.setFont(font)
+        spinBoxLayout.addWidget(spinBoxNameLabel)
 
-        slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
-        slider.setRange(minValue, maxValue)
-        slider.setValue(defaultValue)
-        slider.valueChanged.connect(lambda value, name=sliderName: self.sliderValueChanged(value, name))
-        sliderLayout.addWidget(slider)
+        spinBox = QtWidgets.QSpinBox()
+        spinBox.setRange(minValue, maxValue)
+        spinBox.setValue(defaultValue)
+        spinBox.valueChanged.connect(lambda value, name=spinBoxName: self.spinBoxValueChanged(value, name))
+        spinBoxLayout.addWidget(spinBox)
 
         valueLabel = QtWidgets.QLabel(str(defaultValue))
         valueLabel.setFont(font)
-        sliderLayout.addWidget(valueLabel)
+        spinBoxLayout.addWidget(valueLabel)
 
-        parentLayout.addLayout(sliderLayout)
+        parentLayout.addLayout(spinBoxLayout)
 
-        setattr(self, f"{sliderName.lower()}Slider", slider)
-        setattr(self, f"{sliderName.lower()}ValueLabel", valueLabel)
+        setattr(self, f"{spinBoxName.lower()}SpinBox", spinBox)
+        setattr(self, f"{spinBoxName.lower()}ValueLabel", valueLabel)
 
-    def sliderValueChanged(self, value, name):
+     def spinBoxValueChanged(self, value, name):
         label = getattr(self, f"{name.lower()}ValueLabel")
         label.setText(str(value))
 
@@ -205,7 +205,7 @@ class SerialApp(QtWidgets.QMainWindow):
             self.triggercatch.setText('!!! Serial is not connected !!!')
             
     def startButtonPushed(self):
-        ipi = self.ipiSlider.value()
+        ipi = self.ipiSpinBox.value()  # Change from Slider to SpinBox
         
         if not self.isRunning:
             self.isRunning = True
