@@ -250,11 +250,13 @@ class SerialApp(QtWidgets.QMainWindow):
         
     def updateProgressBar(self, i, numLoops):
         # Update the progress bar in the main thread
-        progress = int((i / numLoops) * 100)
+        truei = i +1
+        progress = int((truei / numLoops) * 100)
         self.progressBar.setValue(progress)
         
     def updateStartbutton(self, i):
-      self.startButton.setText(f"rep: {i}")
+      truei = i +1
+      self.startButton.setText(f"rep: {truei}")
 
         
     def pauseLoop(self):
