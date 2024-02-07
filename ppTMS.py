@@ -220,6 +220,7 @@ class SerialApp(QtWidgets.QMainWindow):
     def runStimulationLoop(self):
         numLoops = self.nrepSlider.value()
         iti = self.itiSlider.value()
+        print(iti)
     
         for i in range(numLoops):
     
