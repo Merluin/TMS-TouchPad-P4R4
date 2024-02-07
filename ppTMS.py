@@ -167,7 +167,8 @@ class SerialApp(QtWidgets.QMainWindow):
         spinBox = QtWidgets.QSpinBox()
         spinBox.setRange(minValue, maxValue)
         spinBox.setValue(defaultValue)
-        spinBox.setFixedHeight(80)
+        spinBox.setFixedHeight(60)
+        spinBox.setFont(font)
         spinBox.valueChanged.connect(lambda value, name=spinBoxName: self.spinBoxValueChanged(value, name))
         spinBoxLayout.addWidget(spinBox)
 
