@@ -250,7 +250,7 @@ class SerialApp(QtWidgets.QMainWindow):
         self.isRunning = False
         now = datetime.now()
         time_string = now.strftime("%H:%M:%S")
-        self.startButton.setText(f"{time_string}")
+        #self.startButton.setText(f"{time_string}")
         
     def updateProgressBar(self, i, numLoops):
         # Update the progress bar in the main thread
