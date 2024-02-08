@@ -5,6 +5,8 @@ from PyQt5.QtGui import QFont
 import RPi.GPIO as GPIO
 import time
 import threading
+from datetime import datetime
+
 
 font = QFont()
 font.setPointSize(18)
@@ -236,7 +238,7 @@ class SerialApp(QtWidgets.QMainWindow):
                     break  # Break the loop if stop button was pressed
                 start_time = time.time()
                 self.updateStartbutton(i)
-                self.arduinoSerial.write(b'1')
+                self.arduinoSerial.write(b'1\n')
                 # Update UI
                 self.updateProgressBar(i, numLoops)
                 # Calculate the remaining time to sleep
@@ -246,7 +248,9 @@ class SerialApp(QtWidgets.QMainWindow):
     
         self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
         self.isRunning = False
-        self.startButton.setText("Start")
+        now = datetime.now()
+        time_string = now.strftime("%H:%M:%S")
+        self.startButton.setText(f"{time_string}")
         
     def updateProgressBar(self, i, numLoops):
         # Update the progress bar in the main thread
