@@ -6,7 +6,6 @@ import RPi.GPIO as GPIO
 import time
 import threading
 from datetime import datetime
-from PyQt5.QtCore import QMetaObject, Qt, Q_ARG
 
 
 font = QFont()
@@ -238,38 +237,30 @@ class SerialApp(QtWidgets.QMainWindow):
                 if not self.isRunning:
                     break  # Break the loop if stop button was pressed
                 start_time = time.time()
-                 # Safely update the UI from the main thread
-                QMetaObject.invokeMethod(self.startButton, "setText", Qt.QueuedConnection,
-                                         Q_ARG(str, f"rep: {i+1}"))
+                self.updateStartbutton(i)
                 self.arduinoSerial.write(b'1\n')
-                
-                # Update the progress bar in the main thread
-                progress = int(((i+1) / numLoops) * 100)
-                QMetaObject.invokeMethod(self.progressBar, "setValue", Qt.QueuedConnection,
-                                         Q_ARG(int, progress))
+                # Update UI
+                self.updateProgressBar(i, numLoops)
                 # Calculate the remaining time to sleep
                 elapsed_time = time.time() - start_time
                 remaining_time = max(0, iti - elapsed_time)
                 time.sleep(remaining_time)
     
-        # Set progress bar to 100 or 0 depending on the state of 'isRunning'
-        final_progress = 100 if self.isRunning else 0
-        QMetaObject.invokeMethod(self.progressBar, "setValue", Qt.QueuedConnection,
-                                 Q_ARG(int, final_progress))        self.isRunning = False
+        self.progressBar.setValue(100) if self.isRunning else self.progressBar.setValue(0)
+        self.isRunning = False
         now = datetime.now()
         time_string = now.strftime("%H:%M:%S")
         self.startButton.setText(time_string)
         
     def updateProgressBar(self, i, numLoops):
-      truei = i + 1
-      progress = int((truei / numLoops) * 100)
-      QMetaObject.invokeMethod(self.progressBar, "setValue", Qt.QueuedConnection, Q_ARG(int, progress))
+        # Update the progress bar in the main thread
+        truei = i +1
+        progress = int((truei / numLoops) * 100)
+        self.progressBar.setValue(progress)
         
     def updateStartbutton(self, i):
-      truei = i + 1
-      text = f"rep: {truei}"
-      QMetaObject.invokeMethod(self.startButton, "setText", Qt.QueuedConnection, Q_ARG(str, text))
-
+      truei = i +1
+      self.startButton.setText(f"rep: {truei}")
 
         
     def pauseLoop(self):
