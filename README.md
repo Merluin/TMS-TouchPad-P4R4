@@ -1,5 +1,7 @@
 # TMS-TouchPad-P4R4
 
+![IMG_0822](https://github.com/Merluin/TMS-TouchPad-P4R4/assets/57815781/0d415470-faae-4257-ad6f-ac81e811ff8c)
+
 Welcome to the TMS-TouchPad-P4R4 repository, the home of an advanced interface designed to enhance Transcranial Magnetic Stimulation (TMS) sessions. This repository includes code and documentation for interfacing TMS equipment with an Arduino-powered control system and a Python-driven GUI application running on a Raspberry Pi.
 
 ## Safety and Disclaimer
