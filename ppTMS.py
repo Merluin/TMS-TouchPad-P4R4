@@ -178,7 +178,7 @@ class SerialApp(QtWidgets.QMainWindow):
         label.setText(str(value))
 
 
- def TsButtonPushed(self):
+    def TsButtonPushed(self):
         try:
             self.arduinoSerial.write(b'SET,test,1\n')
             self.triggercatch.setText('Ts pressed')
