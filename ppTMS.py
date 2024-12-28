@@ -5,7 +5,6 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 import RPi.GPIO as GPIO
 import time
-from datetime import datetime
 
 # Font for UI
 font = QFont()
@@ -27,29 +26,37 @@ class StimulationThread(QThread):
     progress_signal = pyqtSignal(int)
     message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep, iti, arduino_serial, ipi):
+    def __init__(self, nrep_spinbox, iti_spinbox, arduino_serial, ipi_spinbox):
         super().__init__()
-        self.nrep = nrep
-        self.iti = iti
-        self.ipi = ipi  # Inter-Pulse Interval
+        self.nrep_spinbox = nrep_spinbox
+        self.iti_spinbox = iti_spinbox
+        self.ipi_spinbox = ipi_spinbox
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
     def run(self):
-        for i in range(self.nrep):
+        nrep = self.nrep_spinbox.value()  # Initial number of repetitions
+        for i in range(nrep):
             if not self.isRunning:
                 break
             try:
+                # Fetch the latest values dynamically
+                iti = self.iti_spinbox.value()
+                ipi = self.ipi_spinbox.value()
+
+                # Debug: Log the values to ensure they are updated
+                print(f"Iteration {i + 1}: ITI={iti}, IPI={ipi}")
+
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
-                time.sleep(self.ipi)  # Add a delay for IPI
+                time.sleep(ipi)  # Inter-Pulse Interval
 
                 # Emit progress and message
-                self.progress_signal.emit(int((i + 1) / self.nrep * 100))
+                self.progress_signal.emit(int((i + 1) / nrep * 100))
                 self.message_signal.emit(f"rep: {i + 1}")
 
-                # Wait for remaining time in ITI after subtracting IPI
-                remaining_iti = max(0, self.iti - self.ipi)
+                # Wait for remaining ITI time
+                remaining_iti = max(0, iti - ipi)
                 time.sleep(remaining_iti)
             except Exception as e:
                 self.message_signal.emit(f"Error: {e}")
@@ -206,33 +213,29 @@ class SerialApp(QMainWindow):
         self.writeToSerial("SET,test,3\n")
 
     def startButtonPushed(self):
-      if not self.isRunning:
-        # Update values dynamically from the spin boxes
-        nrep_value = self.nrepSpinBox.value()
-        iti_value = self.itiSpinBox.value()
-        ipi_value = self.ipiSpinBox.value()
-
-        self.isRunning = True
-        self.stimulation_thread = StimulationThread(
-            nrep_value,    # Updated Number of repetitions
-            iti_value,     # Updated Inter-Trial Interval
-            self.arduinoSerial,  # Arduino serial connection
-            ipi_value      # Updated Inter-Pulse Interval
-        )
-        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-        self.stimulation_thread.message_signal.connect(self.startButton.setText)
-        self.stimulation_thread.finished.connect(self.onStimulationFinished)
-        self.stimulation_thread.start()
+        if not self.isRunning:
+            self.isRunning = True
+            self.stimulation_thread = StimulationThread(
+                self.nrepSpinBox,  # Pass spin box object
+                self.itiSpinBox,   # Pass spin box object
+                self.arduinoSerial,
+                self.ipiSpinBox    # Pass spin box object
+            )
+            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+            self.stimulation_thread.message_signal.connect(self.startButton.setText)
+            self.stimulation_thread.finished.connect(self.onStimulationFinished)
+            self.stimulation_thread.start()
 
     def onStimulationFinished(self):
         self.isRunning = False
         self.startButton.setText("Start")
 
     def stopButtonPushed(self):
-        self.isRunning = False
-        self.stimulation_thread.stop()
-        self.progressBar.setValue(0)
-        self.startButton.setText("Start")
+        if self.isRunning:
+            self.isRunning = False
+            self.stimulation_thread.stop()
+            self.progressBar.setValue(0)
+            self.startButton.setText("Start")
 
     def closeEvent(self, event):
         relay_off()
