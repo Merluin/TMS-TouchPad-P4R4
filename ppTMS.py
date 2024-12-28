@@ -21,50 +21,7 @@ def relay_on():
 def relay_off():
     GPIO.output(17, GPIO.LOW)
 
-# QThread for Stimulation Loop
-class StimulationThread(QThread):
-    progress_signal = pyqtSignal(int)
-    message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep_spinbox, iti_spinbox, arduino_serial, ipi_spinbox):
-        super().__init__()
-
-        self.arduino_serial = arduino_serial
-        self.isRunning = True
-
-    def run(self):
-        nrep = self.nrep_spinbox.value()  # Initial number of repetitions
-        for i in range(nrep):
-            if not self.isRunning:
-                break
-            try:
-                # Fetch the latest values dynamically
-                iti = self.iti_spinbox.value()
-                ipi = self.ipi_spinbox.value()
-
-                # Debug: Log the values to ensure they are updated
-                print(f"Iteration {i + 1}: ITI={iti}, IPI={ipi}")
-
-                # Send trigger to Arduino
-                self.arduino_serial.write(b'1\n')
-                time.sleep(ipi)  # Inter-Pulse Interval
-
-                # Emit progress and message
-                self.progress_signal.emit(int((i + 1) / nrep * 100))
-                self.message_signal.emit(f"rep: {i + 1}")
-
-                # Wait for remaining ITI time
-                remaining_iti = max(0, iti - ipi)
-                time.sleep(remaining_iti)
-            except Exception as e:
-                self.message_signal.emit(f"Error: {e}")
-                break
-
-        # Emit final progress status
-        self.progress_signal.emit(100 if self.isRunning else 0)
-
-    def stop(self):
-        self.isRunning = False
 
 
 # Main Application
@@ -259,5 +216,50 @@ if __name__ == '__main__':
     mainWin = SerialApp()
     mainWin.show()
     sys.exit(app.exec_())
+    
+# QThread for Stimulation Loop
+class StimulationThread(QThread):
+    progress_signal = pyqtSignal(int)
+    message_signal = pyqtSignal(str)
+
+    def __init__(self, nrep_spinbox, iti_spinbox, arduino_serial, ipi_spinbox):
+        super().__init__()
+
+        self.arduino_serial = arduino_serial
+        self.isRunning = True
+
+    def run(self):
+        nrep = self.nrep_spinbox.value()  # Initial number of repetitions
+        for i in range(nrep):
+            if not self.isRunning:
+                break
+            try:
+                # Fetch the latest values dynamically
+                iti = self.iti_spinbox.value()
+                ipi = self.ipi_spinbox.value()
+
+                # Debug: Log the values to ensure they are updated
+                print(f"Iteration {i + 1}: ITI={iti}, IPI={ipi}")
+
+                # Send trigger to Arduino
+                self.arduino_serial.write(b'1\n')
+                time.sleep(ipi)  # Inter-Pulse Interval
+
+                # Emit progress and message
+                self.progress_signal.emit(int((i + 1) / nrep * 100))
+                self.message_signal.emit(f"rep: {i + 1}")
+
+                # Wait for remaining ITI time
+                remaining_iti = max(0, iti - ipi)
+                time.sleep(remaining_iti)
+            except Exception as e:
+                self.message_signal.emit(f"Error: {e}")
+                break
+
+        # Emit final progress status
+        self.progress_signal.emit(100 if self.isRunning else 0)
+
+    def stop(self):
+        self.isRunning = False
     
 # end
