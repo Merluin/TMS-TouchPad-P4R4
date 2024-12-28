@@ -22,36 +22,41 @@ def relay_off():
     GPIO.output(17, GPIO.LOW)
 
 # QThread for Stimulation Loop
+
+
 class StimulationThread(QThread):
     progress_signal = pyqtSignal(int)
     message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep, iti, ipi, arduino_serial):
+    def __init__(self, nrep_spinbox, iti_spinbox, arduino_serial, ipi_spinbox):
         super().__init__()
-        self.nrep = nrep
-        self.iti = iti
-        self.ipi = ipi
+
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
     def run(self):
-        for i in range(self.nrep):
+        nrep = self.nrep_spinbox.value()  # Initial number of repetitions
+        for i in range(nrep):
             if not self.isRunning:
                 break
             try:
+                # Fetch the latest values dynamically
+                iti = self.iti_spinbox.value()
+                ipi = self.ipi_spinbox.value()
+
                 # Debug: Log the values to ensure they are updated
-                print(f"Iteration {i + 1}: ITI={self.iti}, IPI={self.ipi}")
+                print(f"Iteration {i + 1}: ITI={iti}, IPI={ipi}")
 
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
-                time.sleep(self.ipi)  # Inter-Pulse Interval
+                time.sleep(ipi)  # Inter-Pulse Interval
 
                 # Emit progress and message
-                self.progress_signal.emit(int((i + 1) / self.nrep * 100))
+                self.progress_signal.emit(int((i + 1) / nrep * 100))
                 self.message_signal.emit(f"rep: {i + 1}")
 
                 # Wait for remaining ITI time
-                remaining_iti = max(0, self.iti - self.ipi)
+                remaining_iti = max(0, iti - ipi)
                 time.sleep(remaining_iti)
             except Exception as e:
                 self.message_signal.emit(f"Error: {e}")
@@ -208,18 +213,28 @@ class SerialApp(QMainWindow):
         self.writeToSerial("SET,test,3\n")
 
     def startButtonPushed(self):
-        if not self.isRunning:
-            nrep_value = self.nrepSpinBox.value()
-            iti_value = self.itiSpinBox.value()
-            ipi_value = self.ipiSpinBox.value()
-            self.isRunning = True
-            self.stimulation_thread = StimulationThread(
-                nrep_value, iti_value, ipi_value, self.arduinoSerial
-            )
-            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-            self.stimulation_thread.message_signal.connect(self.startButton.setText)
-            self.stimulation_thread.finished.connect(self.onStimulationFinished)
-            self.stimulation_thread.start()
+      if not self.isRunning:
+        # Fetch current values from spin boxes
+        nrep_value = self.nrepSpinBox.value()
+        iti_value = self.itiSpinBox.value()
+        ipi_value = self.ipiSpinBox.value()
+
+        # Debug: Log the values to verify they are updated
+        print(f"Start pressed with values - Nrep: {nrep_value}, ITI: {iti_value}, IPI: {ipi_value}")
+
+        # Start the stimulation thread with updated values
+        self.isRunning = True
+        self.stimulation_thread = StimulationThread(
+            nrep_value,    # Updated number of repetitions
+            iti_value,     # Updated inter-trial interval
+            self.arduinoSerial,  # Arduino serial connection
+            ipi_value      # Updated inter-pulse interval
+        )
+        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+        self.stimulation_thread.message_signal.connect(self.startButton.setText)
+        self.stimulation_thread.finished.connect(self.onStimulationFinished)
+        self.stimulation_thread.start()
+
 
     def onStimulationFinished(self):
         self.isRunning = False
@@ -241,11 +256,10 @@ class SerialApp(QMainWindow):
 
 # Main program execution
 if __name__ == '__main__':
-    try:
-        relay_on()
-        app = QApplication(sys.argv)
-        mainWin = SerialApp()
-        mainWin.show()
-        sys.exit(app.exec_())
-    finally:
-        GPIO.cleanup()
+    relay_on()
+    app = QApplication(sys.argv)
+    mainWin = SerialApp()
+    mainWin.show()
+    sys.exit(app.exec_())
+    
+# end
