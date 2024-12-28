@@ -21,35 +21,40 @@ def relay_on():
 def relay_off():
     GPIO.output(17, GPIO.LOW)
 
-# QThread for Stimulation Loop
 class StimulationThread(QThread):
     progress_signal = pyqtSignal(int)
     message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep, iti, arduino_serial):
+    def __init__(self, nrep_spinbox, iti_spinbox, ipi_spinbox, arduino_serial):
         super().__init__()
-        self.nrep = nrep_value
-        self.iti = iti_value
+        self.nrep_spinbox = nrep_spinbox  # Spin box for Nrep
+        self.iti_spinbox = iti_spinbox    # Spin box for ITI
+        self.ipi_spinbox = ipi_spinbox    # Spin box for IPI
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
     def run(self):
-        for i in range(self.nrep):
+        nrep = self.nrep_spinbox.value()  # Fetch initial number of repetitions
+        for i in range(nrep):
             if not self.isRunning:
                 break
             try:
-                # Debug: Log the values to ensure they are updated
-                print(f"Iteration {i + 1}: ITI={self.iti}")
+                # Fetch the latest values dynamically
+                iti = self.iti_spinbox.value()
+                ipi = self.ipi_spinbox.value()
+
+                # Debug: Log the values for this iteration
+                print(f"Iteration {i + 1}/{nrep}: ITI={iti}, IPI={ipi}")
 
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
 
-                # Emit progress and message
-                self.progress_signal.emit(int((i + 1) / self.nrep * 100))
+                # Emit progress and update message
+                self.progress_signal.emit(int((i + 1) / nrep * 100))
                 self.message_signal.emit(f"rep: {i + 1}")
 
                 # Wait for remaining ITI time
-                remaining_iti = max(0, self.iti - self.ipi)
+                remaining_iti = max(0, iti - ipi)
                 time.sleep(remaining_iti)
             except Exception as e:
                 self.message_signal.emit(f"Error: {e}")
@@ -60,6 +65,7 @@ class StimulationThread(QThread):
 
     def stop(self):
         self.isRunning = False
+
 
 
 # Main Application
@@ -205,21 +211,29 @@ class SerialApp(QMainWindow):
     def TTLButtonPushed(self):
         self.writeToSerial("SET,test,3\n")
 
-    def startButtonPushed(self):
-        if not self.isRunning:
-            nrep_value = self.nrepSpinBox.value()
-            iti_value = self.itiSpinBox.value()
-            ipi = self.ipiSpinBox.value()
-            self.writeToSerial("SET,IPI1,{ipi}\n")
+def startButtonPushed(self):
+    if not self.isRunning:
+        # Debug: Log the spinner values to ensure they are updated
+        print(f"Start pressed - Current values: Nrep={self.nrepSpinBox.value()}, ITI={self.itiSpinBox.value()}, IPI={self.ipiSpinBox.value()}")
 
-            self.isRunning = True
-            self.stimulation_thread = StimulationThread(
-                nrep_value, iti_value,  self.arduinoSerial
-            )
-            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-            self.stimulation_thread.message_signal.connect(self.startButton.setText)
-            self.stimulation_thread.finished.connect(self.onStimulationFinished)
-            self.stimulation_thread.start()
+        # Send IPI setting to Arduino
+        temp = self.ipiSpinBox.value()
+        self.writeToSerial(f"SET,IPI1,{temp}\n")
+
+        # Initialize and start the stimulation thread
+        self.isRunning = True
+        self.stimulation_thread = StimulationThread(
+            self.nrepSpinBox,  # Pass the Nrep spin box
+            self.itiSpinBox,   # Pass the ITI spin box
+            self.ipiSpinBox,   # Pass the IPI spin box
+            self.arduinoSerial # Pass the Arduino serial connection
+        )
+        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+        self.stimulation_thread.message_signal.connect(self.startButton.setText)
+        self.stimulation_thread.finished.connect(self.onStimulationFinished)
+        self.stimulation_thread.start()
+
+
 
     def onStimulationFinished(self):
         self.isRunning = False
