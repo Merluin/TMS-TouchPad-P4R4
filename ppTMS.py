@@ -91,7 +91,7 @@ class SerialApp(QMainWindow):
             time.sleep(0.1)  # Add a small delay to allow Arduino time to respond
         
             if self.arduinoSerial.in_waiting > 0:
-                line = self.arduinoSerial.readline()
+                line = self.arduinoSerial.readline().line.decode('utf-8')
                 #.decode('utf-8').strip()  # Read and decode the response
                 print(f"Raw response: {line}")  # Print the raw response for debugging
         
