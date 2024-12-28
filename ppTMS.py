@@ -206,18 +206,23 @@ class SerialApp(QMainWindow):
         self.writeToSerial("SET,test,3\n")
 
     def startButtonPushed(self):
-        if not self.isRunning:
-            self.isRunning = True
-            self.stimulation_thread = StimulationThread(
-                self.nrepSpinBox.value(),  # Number of repetitions
-                self.itiSpinBox.value(),  # Inter-Trial Interval
-                self.arduinoSerial,       # Arduino serial connection
-                self.ipiSpinBox.value()   # Inter-Pulse Interval
-            )
-            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-            self.stimulation_thread.message_signal.connect(self.startButton.setText)
-            self.stimulation_thread.finished.connect(self.onStimulationFinished)
-            self.stimulation_thread.start()
+      if not self.isRunning:
+        # Update values dynamically from the spin boxes
+        nrep_value = self.nrepSpinBox.value()
+        iti_value = self.itiSpinBox.value()
+        ipi_value = self.ipiSpinBox.value()
+
+        self.isRunning = True
+        self.stimulation_thread = StimulationThread(
+            nrep_value,    # Updated Number of repetitions
+            iti_value,     # Updated Inter-Trial Interval
+            self.arduinoSerial,  # Arduino serial connection
+            ipi_value      # Updated Inter-Pulse Interval
+        )
+        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+        self.stimulation_thread.message_signal.connect(self.startButton.setText)
+        self.stimulation_thread.finished.connect(self.onStimulationFinished)
+        self.stimulation_thread.start()
 
     def onStimulationFinished(self):
         self.isRunning = False
