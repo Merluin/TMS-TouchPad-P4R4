@@ -254,9 +254,9 @@ class SerialApp(QtWidgets.QMainWindow):
     
         # Set progress bar to 100 or 0 depending on the state of 'isRunning'
         final_progress = 100 if self.isRunning else 0
-        QMetaObject.invokeMethod(self.progressBar, "setValue", Qt.QueuedConnection,
-                                 Q_ARG(int, final_progress))        
-        self.isRunning = False
+        # QMetaObject.invokeMethod(self.progressBar, "setValue", Qt.QueuedConnection,
+        #                          Q_ARG(int, final_progress))        
+        # self.isRunning = False
         now = datetime.now()
         time_string = now.strftime("%H:%M:%S")
         self.startButton.setText(time_string)
