@@ -25,11 +25,10 @@ class StimulationThread(QThread):
     progress_signal = pyqtSignal(int)
     message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep_spinbox, iti_spinbox, ipi_spinbox, arduino_serial):
+    def __init__(self, nrep_spinbox, iti_spinbox, arduino_serial):
         super().__init__()
         self.nrep_spinbox = nrep_spinbox  # Spin box for Nrep
         self.iti_spinbox = iti_spinbox    # Spin box for ITI
-        self.ipi_spinbox = ipi_spinbox    # Spin box for IPI
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
@@ -39,12 +38,11 @@ class StimulationThread(QThread):
             if not self.isRunning:
                 break
             try:
-                # Fetch the latest values dynamically
+                # Fetch the latest ITI value dynamically
                 iti = self.iti_spinbox.value()
-                ipi = self.ipi_spinbox.value()
 
                 # Debug: Log the values for this iteration
-                print(f"Iteration {i + 1}/{nrep}: ITI={iti}, IPI={ipi}")
+                print(f"Iteration {i + 1}/{nrep}: ITI={iti}")
 
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
@@ -53,9 +51,8 @@ class StimulationThread(QThread):
                 self.progress_signal.emit(int((i + 1) / nrep * 100))
                 self.message_signal.emit(f"rep: {i + 1}")
 
-                # Wait for remaining ITI time
-                remaining_iti = max(0, iti - ipi)
-                time.sleep(remaining_iti)
+                # Wait for ITI duration
+                time.sleep(iti)
             except Exception as e:
                 self.message_signal.emit(f"Error: {e}")
                 break
