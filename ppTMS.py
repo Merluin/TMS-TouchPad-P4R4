@@ -212,7 +212,7 @@ class SerialApp(QMainWindow):
             ipi_value = self.ipiSpinBox.value()
             self.isRunning = True
             self.stimulation_thread = StimulationThread(
-                nrep_value, iti_value, ipi_value, self.arduinoSerial
+                nrep_value, iti_value,  self.arduinoSerial
             )
             self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
             self.stimulation_thread.message_signal.connect(self.startButton.setText)

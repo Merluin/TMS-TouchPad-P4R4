@@ -42,10 +42,9 @@ class StimulationThread(QThread):
             try:
                 # Fetch the latest values dynamically
                 iti = self.iti_spinbox.value()
-                ipi = self.ipi_spinbox.value()
 
                 # Debug: Log the values to ensure they are updated
-                print(f"Iteration {i + 1}: ITI={iti}, IPI={ipi}")
+                print(f"Iteration {i + 1}: ITI={iti}")
 
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
