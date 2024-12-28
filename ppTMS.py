@@ -28,9 +28,7 @@ class StimulationThread(QThread):
 
     def __init__(self, nrep_spinbox, iti_spinbox, arduino_serial, ipi_spinbox):
         super().__init__()
-        self.nrep_spinbox = nrep_spinbox
-        self.iti_spinbox = iti_spinbox
-        self.ipi_spinbox = ipi_spinbox
+
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
@@ -212,19 +210,29 @@ class SerialApp(QMainWindow):
     def TTLButtonPushed(self):
         self.writeToSerial("SET,test,3\n")
 
-    def startButtonPushed(self):
-        if not self.isRunning:
-            self.isRunning = True
-            self.stimulation_thread = StimulationThread(
-                self.nrepSpinBox,  # Pass spin box object
-                self.itiSpinBox,   # Pass spin box object
-                self.arduinoSerial,
-                self.ipiSpinBox    # Pass spin box object
-            )
-            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-            self.stimulation_thread.message_signal.connect(self.startButton.setText)
-            self.stimulation_thread.finished.connect(self.onStimulationFinished)
-            self.stimulation_thread.start()
+  def startButtonPushed(self):
+    if not self.isRunning:
+        # Fetch current values from spin boxes
+        nrep_value = self.nrepSpinBox.value()
+        iti_value = self.itiSpinBox.value()
+        ipi_value = self.ipiSpinBox.value()
+
+        # Debug: Log the values to verify they are updated
+        print(f"Start pressed with values - Nrep: {nrep_value}, ITI: {iti_value}, IPI: {ipi_value}")
+
+        # Start the stimulation thread with updated values
+        self.isRunning = True
+        self.stimulation_thread = StimulationThread(
+            nrep_value,    # Updated number of repetitions
+            iti_value,     # Updated inter-trial interval
+            self.arduinoSerial,  # Arduino serial connection
+            ipi_value      # Updated inter-pulse interval
+        )
+        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+        self.stimulation_thread.message_signal.connect(self.startButton.setText)
+        self.stimulation_thread.finished.connect(self.onStimulationFinished)
+        self.stimulation_thread.start()
+
 
     def onStimulationFinished(self):
         self.isRunning = False
