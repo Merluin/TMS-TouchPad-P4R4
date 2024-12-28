@@ -211,8 +211,8 @@ class SerialApp(QMainWindow):
     def TTLButtonPushed(self):
         self.writeToSerial("SET,test,3\n")
 
-def startButtonPushed(self):
-    if not self.isRunning:
+    def startButtonPushed(self):
+      if not self.isRunning:
         # Debug: Log the spinner values to ensure they are updated
         print(f"Start pressed - Current values: Nrep={self.nrepSpinBox.value()}, ITI={self.itiSpinBox.value()}, IPI={self.ipiSpinBox.value()}")
 
