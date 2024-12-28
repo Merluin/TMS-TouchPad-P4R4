@@ -84,32 +84,37 @@ class SerialApp(QMainWindow):
             
         try:
             # Send the command to Arduino to request voltage
-            self.arduinoSerial.write(b'9')   
+            self.arduinoSerial.write(b'9\n')  # Ensure command ends with a newline character
+            print("Command sent: 9")
         
-            try:
-                # Wait for response
-                if self.arduinoSerial.in_waiting > 0:
-                    line = self.arduinoSerial.readline().decode('utf-8').strip()  # Read and decode the response
-                    print(str(line))
-                    try:
-                        # Convert the received string to a float
-                        voltage = float(line)
-                        print(str(voltage))
-                        # Test voltage value and display appropriate message
-                        if voltage < 4.0:  # Adjust threshold as needed
-                            txt_volt = "Change battery"
-                            print(txt_volt) 
-                        else:
-                            txt_volt = "Battery is OK"
-                            print(txt_volt)
-                    except ValueError:
-                        print(f"Invalid response received: {line}")
-                else:
-                    print("No response received from Arduino.")
-            except Exception as e:
-                print(f"Error while reading from Arduino: {e}")
+            # Wait for Arduino's response
+            time.sleep(0.1)  # Add a small delay to allow Arduino time to respond
+        
+            if self.arduinoSerial.in_waiting > 0:
+                line = self.arduinoSerial.readline().decode('utf-8').strip()  # Read and decode the response
+                print(f"Raw response: {line}")  # Print the raw response for debugging
+        
+                try:
+                    # Convert the received string to a float
+                    voltage = float(line)
+                    print(f"Voltage: {voltage} V")  # Debug print for voltage
+        
+                    # Test voltage value and display appropriate message
+                    if voltage < 4.0:  # Adjust threshold as needed
+                        txt_volt = "Change battery"
+                    else:
+                        txt_volt = "Battery is OK"
+                    print(txt_volt)
+        
+                except ValueError:
+                    print(f"Invalid numeric response received: {line}")
+            else:
+                print("No response received from Arduino.")
+        
         except Exception as e:
-            print(f"Error while sending command to Arduino: {e}")
+            print(f"Error during serial communication: {e}")
+
+               
 
 
         # UI setup
