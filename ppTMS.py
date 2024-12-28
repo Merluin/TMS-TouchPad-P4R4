@@ -259,3 +259,5 @@ if __name__ == '__main__':
     mainWin = SerialApp()
     mainWin.show()
     sys.exit(app.exec_())
+    
+# end
