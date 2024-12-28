@@ -218,6 +218,8 @@ class SerialApp(QMainWindow):
         nrep_value = self.nrepSpinBox.value()
         iti_value = self.itiSpinBox.value()
         ipi_value = self.ipiSpinBox.value()
+        self.writeToSerial("SET,IPI1,{ipi}\n")
+
 
         # Debug: Log the values to verify they are updated
         print(f"Start pressed with values - Nrep: {nrep_value}, ITI: {iti_value}, IPI: {ipi_value}")
@@ -228,7 +230,6 @@ class SerialApp(QMainWindow):
             nrep_value,    # Updated number of repetitions
             iti_value,     # Updated inter-trial interval
             self.arduinoSerial,  # Arduino serial connection
-            ipi_value      # Updated inter-pulse interval
         )
         self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
         self.stimulation_thread.message_signal.connect(self.startButton.setText)

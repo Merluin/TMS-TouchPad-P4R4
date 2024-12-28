@@ -26,11 +26,10 @@ class StimulationThread(QThread):
     progress_signal = pyqtSignal(int)
     message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep, iti, ipi, arduino_serial):
+    def __init__(self, nrep, iti, arduino_serial):
         super().__init__()
         self.nrep = nrep
         self.iti = iti
-        self.ipi = ipi
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
@@ -40,11 +39,10 @@ class StimulationThread(QThread):
                 break
             try:
                 # Debug: Log the values to ensure they are updated
-                print(f"Iteration {i + 1}: ITI={self.iti}, IPI={self.ipi}")
+                print(f"Iteration {i + 1}: ITI={self.iti}")
 
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
-                time.sleep(self.ipi)  # Inter-Pulse Interval
 
                 # Emit progress and message
                 self.progress_signal.emit(int((i + 1) / self.nrep * 100))
