@@ -27,10 +27,11 @@ class StimulationThread(QThread):
     progress_signal = pyqtSignal(int)
     message_signal = pyqtSignal(str)
 
-    def __init__(self, nrep, iti, arduino_serial):
+    def __init__(self, nrep, iti, arduino_serial, ipi):
         super().__init__()
         self.nrep = nrep
         self.iti = iti
+        self.ipi = ipi  # Inter-Pulse Interval
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
@@ -41,16 +42,25 @@ class StimulationThread(QThread):
             try:
                 # Send trigger to Arduino
                 self.arduino_serial.write(b'1\n')
+                time.sleep(self.ipi)  # Add a delay for IPI
+
+                # Emit progress and message
                 self.progress_signal.emit(int((i + 1) / self.nrep * 100))
                 self.message_signal.emit(f"rep: {i + 1}")
-                time.sleep(self.iti)
+
+                # Wait for remaining time in ITI after subtracting IPI
+                remaining_iti = max(0, self.iti - self.ipi)
+                time.sleep(remaining_iti)
             except Exception as e:
                 self.message_signal.emit(f"Error: {e}")
                 break
+
+        # Emit final progress status
         self.progress_signal.emit(100 if self.isRunning else 0)
 
     def stop(self):
         self.isRunning = False
+
 
 # Main Application
 class SerialApp(QtWidgets.QMainWindow):
@@ -195,18 +205,20 @@ class SerialApp(QtWidgets.QMainWindow):
     def TTLButtonPushed(self):
         self.writeToSerial("SET,test,3\n")
 
-    def startButtonPushed(self):
-        if not self.isRunning:
-            self.isRunning = True
-            self.stimulation_thread = StimulationThread(
-                self.nrepSpinBox.value(),
-                self.itiSpinBox.value(),
-                self.arduinoSerial
-            )
-            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-            self.stimulation_thread.message_signal.connect(self.startButton.setText)
-            self.stimulation_thread.finished.connect(self.onStimulationFinished)
-            self.stimulation_thread.start()
+def startButtonPushed(self):
+    if not self.isRunning:
+        self.isRunning = True
+        self.stimulation_thread = StimulationThread(
+            self.nrepSpinBox.value(),  # Number of repetitions
+            self.itiSpinBox.value(),  # Inter-Trial Interval
+            self.arduinoSerial,       # Arduino serial connection
+            self.ipiSpinBox.value()   # Inter-Pulse Interval 
+        )
+        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+        self.stimulation_thread.message_signal.connect(self.startButton.setText)
+        self.stimulation_thread.finished.connect(self.onStimulationFinished)
+        self.stimulation_thread.start()
+
 
     def onStimulationFinished(self):
         self.isRunning = False
