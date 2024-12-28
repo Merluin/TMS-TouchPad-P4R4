@@ -1,67 +1,3 @@
-import sys
-import serial
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QThread, pyqtSignal
-import RPi.GPIO as GPIO
-import time
-from datetime import datetime
-
-# Font for UI
-font = QFont()
-font.setPointSize(18)
-font.setBold(True)
-
-# GPIO setup
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.OUT)
-
-def relay_on():
-    GPIO.output(17, GPIO.HIGH)
-
-def relay_off():
-    GPIO.output(17, GPIO.LOW)
-
-# QThread for Stimulation Loop
-class StimulationThread(QThread):
-    progress_signal = pyqtSignal(int)
-    message_signal = pyqtSignal(str)
-
-    def __init__(self, nrep, iti, arduino_serial, ipi):
-        super().__init__()
-        self.nrep = nrep
-        self.iti = iti
-        self.ipi = ipi  # Inter-Pulse Interval
-        self.arduino_serial = arduino_serial
-        self.isRunning = True
-
-    def run(self):
-        for i in range(self.nrep):
-            if not self.isRunning:
-                break
-            try:
-                # Send trigger to Arduino
-                self.arduino_serial.write(b'1\n')
-                time.sleep(self.ipi)  # Add a delay for IPI
-
-                # Emit progress and message
-                self.progress_signal.emit(int((i + 1) / self.nrep * 100))
-                self.message_signal.emit(f"rep: {i + 1}")
-
-                # Wait for remaining time in ITI after subtracting IPI
-                remaining_iti = max(0, self.iti - self.ipi)
-                time.sleep(remaining_iti)
-            except Exception as e:
-                self.message_signal.emit(f"Error: {e}")
-                break
-
-        # Emit final progress status
-        self.progress_signal.emit(100 if self.isRunning else 0)
-
-    def stop(self):
-        self.isRunning = False
-
-
 # Main Application
 class SerialApp(QtWidgets.QMainWindow):
     def __init__(self):
@@ -205,20 +141,19 @@ class SerialApp(QtWidgets.QMainWindow):
     def TTLButtonPushed(self):
         self.writeToSerial("SET,test,3\n")
 
-def startButtonPushed(self):
-    if not self.isRunning:
-        self.isRunning = True
-        self.stimulation_thread = StimulationThread(
-            self.nrepSpinBox.value(),  # Number of repetitions
-            self.itiSpinBox.value(),  # Inter-Trial Interval
-            self.arduinoSerial,       # Arduino serial connection
-            self.ipiSpinBox.value()   # Inter-Pulse Interval 
-        )
-        self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
-        self.stimulation_thread.message_signal.connect(self.startButton.setText)
-        self.stimulation_thread.finished.connect(self.onStimulationFinished)
-        self.stimulation_thread.start()
-
+    def startButtonPushed(self):
+        if not self.isRunning:
+            self.isRunning = True
+            self.stimulation_thread = StimulationThread(
+                self.nrepSpinBox.value(),  # Number of repetitions
+                self.itiSpinBox.value(),  # Inter-Trial Interval
+                self.arduinoSerial,       # Arduino serial connection
+                self.ipiSpinBox.value()   # Inter-Pulse Interval
+            )
+            self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
+            self.stimulation_thread.message_signal.connect(self.startButton.setText)
+            self.stimulation_thread.finished.connect(self.onStimulationFinished)
+            self.stimulation_thread.start()
 
     def onStimulationFinished(self):
         self.isRunning = False
@@ -237,6 +172,7 @@ def startButtonPushed(self):
         GPIO.cleanup()
         super().closeEvent(event)
 
+# Main program execution
 if __name__ == '__main__':
     relay_on()
     app = QtWidgets.QApplication(sys.argv)
