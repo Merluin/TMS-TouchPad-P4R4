@@ -1,5 +1,69 @@
+import sys
+import serial
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QPushButton, QProgressBar, QSplitter
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
+import RPi.GPIO as GPIO
+import time
+from datetime import datetime
+
+# Font for UI
+font = QFont()
+font.setPointSize(18)
+font.setBold(True)
+
+# GPIO setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.OUT)
+
+def relay_on():
+    GPIO.output(17, GPIO.HIGH)
+
+def relay_off():
+    GPIO.output(17, GPIO.LOW)
+
+# QThread for Stimulation Loop
+class StimulationThread(QThread):
+    progress_signal = pyqtSignal(int)
+    message_signal = pyqtSignal(str)
+
+    def __init__(self, nrep, iti, arduino_serial, ipi):
+        super().__init__()
+        self.nrep = nrep
+        self.iti = iti
+        self.ipi = ipi  # Inter-Pulse Interval
+        self.arduino_serial = arduino_serial
+        self.isRunning = True
+
+    def run(self):
+        for i in range(self.nrep):
+            if not self.isRunning:
+                break
+            try:
+                # Send trigger to Arduino
+                self.arduino_serial.write(b'1\n')
+                time.sleep(self.ipi)  # Add a delay for IPI
+
+                # Emit progress and message
+                self.progress_signal.emit(int((i + 1) / self.nrep * 100))
+                self.message_signal.emit(f"rep: {i + 1}")
+
+                # Wait for remaining time in ITI after subtracting IPI
+                remaining_iti = max(0, self.iti - self.ipi)
+                time.sleep(remaining_iti)
+            except Exception as e:
+                self.message_signal.emit(f"Error: {e}")
+                break
+
+        # Emit final progress status
+        self.progress_signal.emit(100 if self.isRunning else 0)
+
+    def stop(self):
+        self.isRunning = False
+
+
 # Main Application
-class SerialApp(QtWidgets.QMainWindow):
+class SerialApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.isRunning = False
@@ -16,43 +80,43 @@ class SerialApp(QtWidgets.QMainWindow):
             print(f"Error opening serial port: {e}")
 
         # UI setup
-        mainWidget = QtWidgets.QWidget()
+        mainWidget = QWidget()
         self.setCentralWidget(mainWidget)
-        mainLayout = QtWidgets.QHBoxLayout(mainWidget)
+        mainLayout = QHBoxLayout(mainWidget)
 
-        splitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
+        splitter = QSplitter(Qt.Horizontal)
 
         # Left Panel
-        leftPanel = QtWidgets.QWidget()
-        leftLayout = QtWidgets.QVBoxLayout(leftPanel)
+        leftPanel = QWidget()
+        leftLayout = QVBoxLayout(leftPanel)
 
-        leftPanelLabel = QtWidgets.QLabel("Settings")
+        leftPanelLabel = QLabel("Settings")
         leftPanelLabel.setFont(font)
-        leftPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
+        leftPanelLabel.setAlignment(Qt.AlignCenter)
         leftLayout.addWidget(leftPanelLabel)
 
         self.createSpinBoxLayout(leftLayout, "IPI", 0, 200, 40)
         self.createSpinBoxLayout(leftLayout, "Nrep", 0, 150, 90)
         self.createSpinBoxLayout(leftLayout, "ITI", 0, 60, 10)
 
-        triggerButtonsLabel = QtWidgets.QLabel("Test:")
+        triggerButtonsLabel = QLabel("Test:")
         triggerButtonsLabel.setFont(font)
         leftLayout.addWidget(triggerButtonsLabel)
 
-        buttonsLayout = QtWidgets.QHBoxLayout()
-        self.cs_button = QtWidgets.QPushButton('Cs')
+        buttonsLayout = QHBoxLayout()
+        self.cs_button = QPushButton('Cs')
         self.cs_button.setFixedHeight(80)
         self.cs_button.setFont(font)
         self.cs_button.clicked.connect(self.CsButtonPushed)
         buttonsLayout.addWidget(self.cs_button)
 
-        self.ts_button = QtWidgets.QPushButton('Ts')
+        self.ts_button = QPushButton('Ts')
         self.ts_button.setFixedHeight(80)
         self.ts_button.setFont(font)
         self.ts_button.clicked.connect(self.TsButtonPushed)
         buttonsLayout.addWidget(self.ts_button)
 
-        self.ttl_button = QtWidgets.QPushButton('Bio')
+        self.ttl_button = QPushButton('Bio')
         self.ttl_button.setFixedHeight(80)
         self.ttl_button.setFont(font)
         self.ttl_button.clicked.connect(self.TTLButtonPushed)
@@ -60,32 +124,32 @@ class SerialApp(QtWidgets.QMainWindow):
 
         leftLayout.addLayout(buttonsLayout)
 
-        self.triggercatch = QtWidgets.QLabel()
+        self.triggercatch = QLabel()
         leftLayout.addWidget(self.triggercatch)
 
         splitter.addWidget(leftPanel)
 
         # Right Panel
-        rightPanel = QtWidgets.QWidget()
-        rightLayout = QtWidgets.QVBoxLayout(rightPanel)
+        rightPanel = QWidget()
+        rightLayout = QVBoxLayout(rightPanel)
 
-        rightPanelLabel = QtWidgets.QLabel("ppTMS")
+        rightPanelLabel = QLabel("ppTMS")
         rightPanelLabel.setFont(font)
-        rightPanelLabel.setAlignment(QtCore.Qt.AlignCenter)
+        rightPanelLabel.setAlignment(Qt.AlignCenter)
         rightLayout.addWidget(rightPanelLabel)
 
-        self.progressBar = QtWidgets.QProgressBar()
+        self.progressBar = QProgressBar()
         self.progressBar.setFixedHeight(50)
         self.progressBar.setFont(font)
         rightLayout.addWidget(self.progressBar)
 
-        self.startButton = QtWidgets.QPushButton('Start')
+        self.startButton = QPushButton('Start')
         self.startButton.setFont(font)
         self.startButton.setFixedHeight(80)
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
 
-        self.stopButton = QtWidgets.QPushButton('Stop')
+        self.stopButton = QPushButton('Stop')
         self.stopButton.setFixedHeight(80)
         self.stopButton.setFont(font)
         self.stopButton.clicked.connect(self.stopButtonPushed)
@@ -98,12 +162,12 @@ class SerialApp(QtWidgets.QMainWindow):
         self.setWindowTitle('GUI ppTMS Pi4R4')
 
     def createSpinBoxLayout(self, parentLayout, spinBoxName, minValue, maxValue, defaultValue):
-        spinBoxLayout = QtWidgets.QHBoxLayout()
-        spinBoxNameLabel = QtWidgets.QLabel(spinBoxName)
+        spinBoxLayout = QHBoxLayout()
+        spinBoxNameLabel = QLabel(spinBoxName)
         spinBoxNameLabel.setFont(font)
         spinBoxLayout.addWidget(spinBoxNameLabel)
 
-        spinBox = QtWidgets.QSpinBox()
+        spinBox = QSpinBox()
         spinBox.setRange(minValue, maxValue)
         spinBox.setValue(defaultValue)
         spinBox.setFixedHeight(60)
@@ -111,7 +175,7 @@ class SerialApp(QtWidgets.QMainWindow):
         spinBox.valueChanged.connect(lambda value, name=spinBoxName: self.spinBoxValueChanged(value, name))
         spinBoxLayout.addWidget(spinBox)
 
-        valueLabel = QtWidgets.QLabel(str(defaultValue))
+        valueLabel = QLabel(str(defaultValue))
         valueLabel.setFont(font)
         spinBoxLayout.addWidget(valueLabel)
 
@@ -175,7 +239,7 @@ class SerialApp(QtWidgets.QMainWindow):
 # Main program execution
 if __name__ == '__main__':
     relay_on()
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     mainWin = SerialApp()
     mainWin.show()
     sys.exit(app.exec_())
