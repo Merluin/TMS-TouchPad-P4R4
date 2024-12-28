@@ -84,7 +84,7 @@ class SerialApp(QMainWindow):
             
         try:
             # Send the command to Arduino to request voltage
-            self.arduinoSerial.write(b'SET,test,9\n')    
+            self.arduinoSerial.write(b'9\n')    
         
             try:
                 # Wait for response
