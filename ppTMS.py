@@ -139,12 +139,6 @@ class SerialApp(QtWidgets.QMainWindow):
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
 
-        # self.pauseButton = QtWidgets.QPushButton('Pause')
-        # self.pauseButton.setFixedHeight(80)
-        # self.pauseButton.setFont(font)
-        # self.pauseButton.clicked.connect(self.pauseButtonPushed)
-        # rightLayout.addWidget(self.pauseButton)
-
         self.stopButton = QtWidgets.QPushButton('Stop')
         self.stopButton.setFixedHeight(80)
         self.stopButton.setFont(font)
@@ -218,13 +212,6 @@ class SerialApp(QtWidgets.QMainWindow):
         self.isRunning = False
         self.startButton.setText("Start")
 
-    def pauseButtonPushed(self):
-        if self.isRunning:
-            self.stimulation_thread.stop()
-            self.startButton.setText("Paused")
-        else:
-            self.startButton.setText("Start")
-
     def stopButtonPushed(self):
         self.isRunning = False
         self.stimulation_thread.stop()
@@ -237,7 +224,6 @@ class SerialApp(QtWidgets.QMainWindow):
             self.arduinoSerial.close()
         GPIO.cleanup()
         super().closeEvent(event)
-
 
 if __name__ == '__main__':
     relay_on()
