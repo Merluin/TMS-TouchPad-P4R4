@@ -177,23 +177,27 @@ class SerialApp(QtWidgets.QMainWindow):
         label = getattr(self, f"{name.lower()}ValueLabel")
         label.setText(str(value))
 
-    def writeToSerial(self, command):
+
+ def TsButtonPushed(self):
         try:
-            if self.arduinoSerial.is_open:
-                self.arduinoSerial.write(command.encode())
-            else:
-                self.triggercatch.setText("Serial port not open!")
+            self.arduinoSerial.write(b'SET,test,1\n')
+            self.triggercatch.setText('Ts pressed')
         except Exception as e:
-            self.triggercatch.setText(f"Error: {e}")
+            self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def CsButtonPushed(self):
-        self.writeToSerial("SET,test,2\n")
-
-    def TsButtonPushed(self):
-        self.writeToSerial("SET,test,1\n")
+        try:
+            self.arduinoSerial.write(b'SET,test,2\n')
+            self.triggercatch.setText('Cs pressed')
+        except Exception as e:
+            self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def TTLButtonPushed(self):
-        self.writeToSerial("SET,test,3\n")
+        try:
+            self.arduinoSerial.write(b'SET,test,3\n')
+            self.triggercatch.setText('Bio pressed')
+        except Exception as e:
+            self.triggercatch.setText('!!! Serial is not connected !!!')
 
     def startButtonPushed(self):
         if not self.isRunning:
