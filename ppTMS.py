@@ -28,8 +28,8 @@ class StimulationThread(QThread):
 
     def __init__(self, nrep, iti, arduino_serial):
         super().__init__()
-        self.nrep = nrep
-        self.iti = iti
+        self.nrep = nrep_value
+        self.iti = iti_value
         self.arduino_serial = arduino_serial
         self.isRunning = True
 
