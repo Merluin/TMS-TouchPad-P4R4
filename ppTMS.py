@@ -81,6 +81,28 @@ class SerialApp(QMainWindow):
             self.arduinoSerial.open()
         except serial.SerialException as e:
             print(f"Error opening serial port: {e}")
+            
+        try:
+          # Send the command to Arduino to request voltage
+          self.arduinoSerial.write(b'SET,test,9\n')    
+          # Wait for response
+          if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').strip()  # Read and decode the response
+        
+          try:
+            # Convert the received string to a float
+            voltage = float(line)
+            
+            # Test voltage value and display appropriate message
+            if voltage < 4.0:  # Adjust threshold as needed
+                txt_volt = "Change battery"
+                print(txt_volt) 
+            else:
+                txt_volt = "Battery is OK"
+                print(txt_volt) 
+               
+        except ValueError:
+            print(f"Invalid response received: {line}")
 
         # UI setup
         mainWidget = QWidget()
