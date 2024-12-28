@@ -5,6 +5,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QThread, pyqtSignal
 import RPi.GPIO as GPIO
 import time
+from datetime import datetime
 
 # Font for UI
 font = QFont()
@@ -138,11 +139,11 @@ class SerialApp(QtWidgets.QMainWindow):
         self.startButton.clicked.connect(self.startButtonPushed)
         rightLayout.addWidget(self.startButton)
 
-        self.pauseButton = QtWidgets.QPushButton('Pause')
-        self.pauseButton.setFixedHeight(80)
-        self.pauseButton.setFont(font)
-        self.pauseButton.clicked.connect(self.pauseButtonPushed)
-        rightLayout.addWidget(self.pauseButton)
+        # self.pauseButton = QtWidgets.QPushButton('Pause')
+        # self.pauseButton.setFixedHeight(80)
+        # self.pauseButton.setFont(font)
+        # self.pauseButton.clicked.connect(self.pauseButtonPushed)
+        # rightLayout.addWidget(self.pauseButton)
 
         self.stopButton = QtWidgets.QPushButton('Stop')
         self.stopButton.setFixedHeight(80)
@@ -153,6 +154,7 @@ class SerialApp(QtWidgets.QMainWindow):
         splitter.addWidget(rightPanel)
         mainLayout.addWidget(splitter)
 
+        self.setGeometry(100, 100, 600, 400)
         self.setWindowTitle('GUI ppTMS Pi4R4')
 
     def createSpinBoxLayout(self, parentLayout, spinBoxName, minValue, maxValue, defaultValue):
@@ -225,8 +227,7 @@ class SerialApp(QtWidgets.QMainWindow):
 
     def stopButtonPushed(self):
         self.isRunning = False
-        if hasattr(self, 'stimulation_thread'):
-            self.stimulation_thread.stop()
+        self.stimulation_thread.stop()
         self.progressBar.setValue(0)
         self.startButton.setText("Start")
 
@@ -237,9 +238,10 @@ class SerialApp(QtWidgets.QMainWindow):
         GPIO.cleanup()
         super().closeEvent(event)
 
+
 if __name__ == '__main__':
     relay_on()
     app = QtWidgets.QApplication(sys.argv)
     mainWin = SerialApp()
-    mainWin.showFullScreen()  # Start in full screen
+    mainWin.show()
     sys.exit(app.exec_())
