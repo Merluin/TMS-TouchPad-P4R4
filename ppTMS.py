@@ -210,8 +210,8 @@ class SerialApp(QMainWindow):
     def TTLButtonPushed(self):
         self.writeToSerial("SET,test,3\n")
 
-  def startButtonPushed(self):
-    if not self.isRunning:
+    def startButtonPushed(self):
+      if not self.isRunning:
         # Fetch current values from spin boxes
         nrep_value = self.nrepSpinBox.value()
         iti_value = self.itiSpinBox.value()
