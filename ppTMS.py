@@ -1,5 +1,6 @@
 import sys
 import serial
+import threading
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QFont
 import RPi.GPIO as GPIO
