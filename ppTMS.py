@@ -90,11 +90,11 @@ class SerialApp(QMainWindow):
                 # Wait for response
                 if self.arduinoSerial.in_waiting > 0:
                     line = self.arduinoSerial.readline().decode('utf-8').strip()  # Read and decode the response
-                    print(line)
+                    print(str(line))
                     try:
                         # Convert the received string to a float
                         voltage = float(line)
-                        print(voltage)
+                        print(str(voltage))
                         # Test voltage value and display appropriate message
                         if voltage < 4.0:  # Adjust threshold as needed
                             txt_volt = "Change battery"
