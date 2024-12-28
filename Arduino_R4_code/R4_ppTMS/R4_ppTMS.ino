@@ -12,6 +12,7 @@ int test = 4; // Test variable for conditional triggering
 // Voltage measurement
 int analogVoltage;
 float voltage;
+float tzt;
 
 void setup() {
   // Pin initialization
@@ -64,7 +65,10 @@ void loop() {
     else if (command == "9") {
       analogVoltage = analogRead(A0);                // Read the analog input
       voltage = analogVoltage * (5.0 / 1023.0);      // Convert to voltage (5V reference)
-      Serial1.println(voltage, 3);  // Send voltage with 3 decimal precision
+
+      Serial1.println("333");
+
+      //Serial1.println(voltage, 3);  // Send voltage with 3 decimal precision
     }
   }
 }
