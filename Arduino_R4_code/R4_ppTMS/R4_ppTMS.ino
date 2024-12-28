@@ -62,13 +62,9 @@ void loop() {
     }
     // Voltage measurement for "9" command
     else if (command == "9") {
-      digitalWrite(TestPin, HIGH);
-      delay(TriggerDuration);
-      digitalWrite(TestPin, LOW);
       analogVoltage = analogRead(A0);                // Read the analog input
       voltage = analogVoltage * (5.0 / 1023.0);      // Convert to voltage (5V reference)
-      Serial1.println(voltage, 3);  
-                 // Send voltage with 3 decimal precision
+      Serial1.println(voltage, 3);  // Send voltage with 3 decimal precision
     }
   }
 }
