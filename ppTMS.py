@@ -222,7 +222,6 @@ class SerialApp(QMainWindow):
         self.stimulation_thread = StimulationThread(
             self.nrepSpinBox,  # Pass the Nrep spin box
             self.itiSpinBox,   # Pass the ITI spin box
-            self.ipiSpinBox,   # Pass the IPI spin box
             self.arduinoSerial # Pass the Arduino serial connection
         )
         self.stimulation_thread.progress_signal.connect(self.progressBar.setValue)
