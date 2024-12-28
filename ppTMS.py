@@ -48,7 +48,7 @@ class StimulationThread(QThread):
                 self.arduino_serial.write(b'1\n')
 
                 # Emit progress and update message
-                self.progress_signal.emit(int((i + 1) / nrep * 100))
+                self.progress_signal.emit(int((i + 1)))
                 self.message_signal.emit(f"rep: {i + 1}")
 
                 # Wait for ITI duration
