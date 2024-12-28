@@ -209,7 +209,9 @@ class SerialApp(QMainWindow):
         if not self.isRunning:
             nrep_value = self.nrepSpinBox.value()
             iti_value = self.itiSpinBox.value()
-            ipi_value = self.ipiSpinBox.value()
+            ipi = self.ipiSpinBox.value()
+            self.writeToSerial("SET,IPI1,{ipi}\n")
+
             self.isRunning = True
             self.stimulation_thread = StimulationThread(
                 nrep_value, iti_value,  self.arduinoSerial
