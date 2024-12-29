@@ -90,7 +90,6 @@ class SerialApp(QMainWindow):
             # Wait for Arduino's response
             time.sleep(0.1)  # Add a small delay to allow Arduino time to respond
         
-        try:
             # Check if data is available
             if self.arduinoSerial.in_waiting > 0:
                 # Read and decode the response
