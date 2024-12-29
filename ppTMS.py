@@ -99,9 +99,9 @@ class SerialApp(QMainWindow):
         
                 # Test voltage value and display appropriate message
                 if voltage == "high":  # Adjust condition as needed
-                    txt_volt = "Battery is OK"
+                    txt_volt = "Battery status: Normal."
                 else:
-                    txt_volt = "Replace the 9V Battery"
+                    txt_volt = "Battery status: Replace immediately."
                 print(txt_volt)  # Output the result
             else:
                 print("No response received from Arduino.")
