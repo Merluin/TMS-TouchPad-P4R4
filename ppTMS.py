@@ -84,6 +84,7 @@ class SerialApp(QMainWindow):
 
         try:
             # Send the command to Arduino to request voltage
+            time.sleep(1)
             self.arduinoSerial.write(b'9\n')  # Ensure command ends with a newline character
             print("Command sent: 9")
         
