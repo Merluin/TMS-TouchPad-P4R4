@@ -89,7 +89,7 @@ class SerialApp(QMainWindow):
         
             # Initialize variables for loop
             start_time = time.time()  # Record the start time
-            timeout = 5  # Maximum wait time in seconds
+            timeout = 2  # Maximum wait time in seconds
             voltage = None  # Placeholder for response
         
             # Loop until a valid response or timeout

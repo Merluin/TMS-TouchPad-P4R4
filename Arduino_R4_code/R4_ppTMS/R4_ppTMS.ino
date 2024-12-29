@@ -62,15 +62,15 @@ void loop() {
     }
     // Voltage measurement for "9" command
     else if (command == "9") {
-      analogVoltage = analogRead(A0);                // Read the analog input
-      if (analogVoltage < 850) 
-      {
-        Serial1.print("low");
-      }
-      else
-      {
-        Serial1.println("high");
-      }
+      digitalWrite(LedPin, LOW); // Turn off LED to indicate Arduino is active
+      delay(TriggerDuration);
+      digitalWrite(LedPin, HIGH); // Turn on LED to indicate Arduino is active
+      analogVoltage = analogRead(A0);  // Read the analog input
+      if (analogVoltage < 750) {
+        Serial1.println("low");  // Ensure newline is sent
+        } else {
+          Serial1.println("high");  // Ensure newline is sent
+  }
     }
   }
 }
