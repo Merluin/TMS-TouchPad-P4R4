@@ -65,11 +65,11 @@ void loop() {
       analogVoltage = analogRead(A0);                // Read the analog input
       if (analogVoltage < 850) 
       {
-        Serial1.print("low battery");
+        Serial1.print("low");
       }
       else
       {
-        Serial1.println("low high");
+        Serial1.println("high");
       }
     }
   }
