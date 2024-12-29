@@ -81,30 +81,38 @@ class SerialApp(QMainWindow):
             self.arduinoSerial.open()
         except serial.SerialException as e:
             print(f"Error opening serial port: {e}")
-            
+
         try:
             # Send the command to Arduino to request voltage
             self.arduinoSerial.write(b'9\n')  # Ensure command ends with a newline character
             print("Command sent: 9")
         
-            # Wait for Arduino's response
-            time.sleep(0.1)  # Add a small delay to allow Arduino time to respond
+            # Initialize variables for loop
+            start_time = time.time()  # Record the start time
+            timeout = 5  # Maximum wait time in seconds
+            voltage = None  # Placeholder for response
         
-            # Check if data is available
-            if self.arduinoSerial.in_waiting > 0:
-                # Read and decode the response
-                voltage = self.arduinoSerial.readline()
-                #.decode('utf-8').strip()
-                print(f"Raw response: {voltage}")  # Print the raw response for debugging
+            # Loop until a valid response or timeout
+            while voltage not in ["high", "low"]:
+                if self.arduinoSerial.in_waiting > 0:  # Check if data is available
+                    # Read and decode the response
+                    voltage = self.arduinoSerial.readline().decode('utf-8').strip()
+                    print(f"Raw response: {voltage}")  # Debug: Print the raw response
         
-                # Test voltage value and display appropriate message
-                if voltage == "high":  # Adjust condition as needed
-                    txt_volt = "Battery status: Normal."
-                else:
-                    txt_volt = "Battery status: Replace immediately."
-                print(txt_volt)  # Output the result
-            else:
-                print("No response received from Arduino.")
+                    if voltage == "high":
+                        txt_volt = "Battery status: Normal."
+                        print(txt_volt)
+                        break
+                    elif voltage == "low":
+                        txt_volt = "Battery status: Replace immediately."
+                        print(txt_volt)
+                        break
+                # Check for timeout
+                if time.time() - start_time > timeout:
+                    print("Timeout waiting for response from Arduino.")
+                    break
+                time.sleep(0.1)  # Small delay before checking again
+        
         except Exception as e:
             print(f"Error during serial communication: {e}")
 
