@@ -93,7 +93,8 @@ class SerialApp(QMainWindow):
             # Check if data is available
             if self.arduinoSerial.in_waiting > 0:
                 # Read and decode the response
-                voltage = self.arduinoSerial.readline().decode('utf-8').strip()
+                voltage = self.arduinoSerial.readline()
+                #.decode('utf-8').strip()
                 print(f"Raw response: {voltage}")  # Print the raw response for debugging
         
                 # Test voltage value and display appropriate message
