@@ -34,7 +34,7 @@ The TMS-TouchPad-P4R4 is a versatile device that allows for precise control over
 
 For issues, queries, or additional support, please contact:
 
-- Email: thomas.quettier2@unibo.it
+- Email: research@unibo.it
 
 
 ## Contributing
